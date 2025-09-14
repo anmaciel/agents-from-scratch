@@ -174,7 +174,7 @@ async def ingest_email_to_langgraph(email_data, graph_name, url="http://127.0.0.
                 try:
                     await client.runs.delete(thread_id, run_id)
                 except Exception as e:
-                    print(f"Failed to delete run {run_id}: {str(e)}")
+                    print(f"Falha ao deletar execução {run_id}: {str(e)}")
         except Exception as e:
             print(f"Error listing/deleting runs: {str(e)}")
     
@@ -206,7 +206,7 @@ async def fetch_and_process_emails(args):
     # Load Gmail credentials
     credentials = load_gmail_credentials()
     if not credentials:
-        print("Failed to load Gmail credentials")
+        print("Falha ao carregar credenciais do Gmail")
         return 1
         
     # Build Gmail service

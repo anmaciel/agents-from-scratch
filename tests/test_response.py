@@ -31,7 +31,7 @@ class CriteriaGrade(BaseModel):
     justification: str = Field(description="The justification for the grade and score, including specific examples from the response.")
 
 # Create a global LLM for evaluation to avoid recreating it for each test
-criteria_eval_llm = init_chat_model("openai:gpt-4o")
+criteria_eval_llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai")
 criteria_eval_structured_llm = criteria_eval_llm.with_structured_output(CriteriaGrade)
 
 # Global variables for module name and imported module

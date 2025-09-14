@@ -3,6 +3,7 @@
 ## Overview
 
 This repository demonstrates building agents using LangGraph, focusing on an email assistant that can:
+
 - Triage incoming emails
 - Draft appropriate responses
 - Execute actions (calendar scheduling, etc.)
@@ -11,7 +12,7 @@ This repository demonstrates building agents using LangGraph, focusing on an ema
 
 ## Environment Setup
 
-**Recommended: Using uv (faster and more reliable)**
+**Recommended: Using uv (faster and more reliable)*
 
 ```bash
 # Install uv if you haven't already
@@ -21,7 +22,7 @@ pip install uv
 uv sync --extra dev
 ```
 
-**Alternative: Using pip**
+**Alternative: Using pip*
 
 ```bash
 # Create and activate a virtual environment
@@ -39,17 +40,16 @@ The package is installed as `interrupt_workshop` with import name `email_assista
 
 ## Agent Implementations
 
-### Scripts 
+### Scripts
 
 The repository contains several implementations with increasing complexity in `src/email_assistant`:
 
 1. **LangGraph 101** (`langgraph_101.py`)
-   - Basics of LangGraph 
-
+   - Basics of LangGraph
 2. **Basic Email Assistant** (`email_assistant.py`)
    - Core email triage and response functionality
 
-3. **Human-in-the-Loop** (`email_assistant_hitl.py`) 
+3. **Human-in-the-Loop** (`email_assistant_hitl.py`)
    - Adds ability for humans to review and approve actions
 
 4. **Memory-Enabled HITL** (`email_assistant_hitl_memory.py`)
@@ -61,6 +61,7 @@ The repository contains several implementations with increasing complexity in `s
 ### Notebooks
 
 Each aspect of the agent is explained in dedicated notebooks:
+
 - `notebooks/langgraph_101.ipynb` - LangGraph basics
 - `notebooks/agent.ipynb` - Basic agent implementation
 - `notebooks/evaluation.ipynb` - Agent evaluation
@@ -88,4 +89,3 @@ Test all notebooks to ensure they run without errors:
 # Run all notebook tests directly
 python tests/test_notebooks.py
 ```
-

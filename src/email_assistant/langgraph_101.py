@@ -7,11 +7,11 @@ load_dotenv(".env")
 
 @tool
 def write_email(to: str, subject: str, content: str) -> str:
-    """Write and send an email."""
+    """Escrever e enviar um email."""
     # Placeholder response - in real app would send email
-    return f"Email sent to {to} with subject '{subject}' and content: {content}"
+    return f"Email enviado para {to} com assunto '{subject}' e conteúdo: {content}"
 
-llm = init_chat_model("openai:gpt-4.1", temperature=0)
+llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0)
 model_with_tools = llm.bind_tools([write_email], tool_choice="any")
 
 def call_llm(state: MessagesState) -> MessagesState:

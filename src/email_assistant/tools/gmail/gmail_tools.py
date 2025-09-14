@@ -421,7 +421,7 @@ def fetch_group_emails(
                     count += 1
                     
             except Exception as e:
-                logger.warning(f"Failed to process message {message['id']}: {str(e)}")
+                logger.warning(f"Falha ao processar mensagem {message['id']}: {str(e)}")
 
         logger.info(f"Found {count} emails to process out of {len(messages)} total messages.")
     
@@ -626,9 +626,9 @@ def send_email_tool(
         if success:
             return f"Email reply sent successfully to message ID: {email_id}"
         else:
-            return "Failed to send email due to an API error"
+            return "Falha ao enviar email devido a erro na API"
     except Exception as e:
-        return f"Failed to send email: {str(e)}"
+        return f"Falha ao enviar email: {str(e)}"
 
 class CheckCalendarInput(BaseModel):
     """
@@ -799,7 +799,7 @@ def check_calendar_tool(dates: List[str]) -> str:
         events = get_calendar_events(dates)
         return events
     except Exception as e:
-        return f"Failed to check calendar: {str(e)}"
+        return f"Falha ao verificar calendário: {str(e)}"
 
 class ScheduleMeetingInput(BaseModel):
     """
@@ -929,9 +929,9 @@ def schedule_meeting_tool(
         if success:
             return f"Meeting '{title}' scheduled successfully from {start_time} to {end_time} with {len(attendees)} attendees"
         else:
-            return "Failed to schedule meeting"
+            return "Falha ao agendar reunião"
     except Exception as e:
-        return f"Error scheduling meeting: {str(e)}"
+        return f"Erro ao agendar reunião: {str(e)}"
     
 def mark_as_read(
     message_id,

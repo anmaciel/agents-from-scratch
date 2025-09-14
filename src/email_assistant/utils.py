@@ -3,14 +3,14 @@ import json
 import html2text
 
 def format_email_markdown(subject, author, to, email_thread, email_id=None):
-    """Format email details into a nicely formatted markdown string for display
-    
+    """Formatar detalhes do email em uma string markdown bem formatada para exibição
+
     Args:
-        subject: Email subject
-        author: Email sender
-        to: Email recipient
-        email_thread: Email content
-        email_id: Optional email ID (for Gmail API)
+        subject: Assunto do email
+        author: Remetente do email
+        to: Destinatário do email
+        email_thread: Conteúdo do email
+        email_id: ID do email opcional (para Gmail API)
     """
     id_section = f"\n**ID**: {email_id}" if email_id else ""
     

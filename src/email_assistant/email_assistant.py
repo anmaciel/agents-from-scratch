@@ -18,16 +18,16 @@ tools = get_tools()
 tools_by_name = get_tools_by_name(tools)
 
 # Initialize the LLM for use with router / structured output
-llm = init_chat_model("openai:gpt-4.1", temperature=0.0)
+llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0.0)
 llm_router = llm.with_structured_output(RouterSchema) 
 
 # Initialize the LLM, enforcing tool use (of any available tools) for agent
-llm = init_chat_model("openai:gpt-4.1", temperature=0.0)
+llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0.0)
 llm_with_tools = llm.bind_tools(tools, tool_choice="any")
 
-# Nodes
+# Nós
 def llm_call(state: State):
-    """LLM decides whether to call a tool or not"""
+    """LLM decide se deve chamar uma ferramenta ou não"""
 
     return {
         "messages": [
@@ -47,7 +47,7 @@ def llm_call(state: State):
     }
 
 def tool_node(state: State):
-    """Performs the tool call"""
+    """Executa a chamada da ferramenta"""
 
     result = []
     for tool_call in state["messages"][-1].tool_calls:
@@ -56,9 +56,9 @@ def tool_node(state: State):
         result.append({"role": "tool", "content" : observation, "tool_call_id": tool_call["id"]})
     return {"messages": result}
 
-# Conditional edge function
+# Função de aresta condicional
 def should_continue(state: State) -> Literal["Action", "__end__"]:
-    """Route to Action, or end if Done tool called"""
+    """Redireciona para Action ou termina se a ferramenta Done foi chamada"""
     messages = state["messages"]
     last_message = messages[-1]
     if last_message.tool_calls:
@@ -68,36 +68,36 @@ def should_continue(state: State) -> Literal["Action", "__end__"]:
             else:
                 return "Action"
 
-# Build workflow
+# Construir fluxo de trabalho
 agent_builder = StateGraph(State)
 
-# Add nodes
+# Adicionar nós
 agent_builder.add_node("llm_call", llm_call)
 agent_builder.add_node("environment", tool_node)
 
-# Add edges to connect nodes
+# Adicionar arestas para conectar nós
 agent_builder.add_edge(START, "llm_call")
 agent_builder.add_conditional_edges(
     "llm_call",
     should_continue,
     {
-        # Name returned by should_continue : Name of next node to visit
+        # Nome retornado por should_continue : Nome do próximo nó a visitar
         "Action": "environment",
         END: END,
     },
 )
 agent_builder.add_edge("environment", "llm_call")
 
-# Compile the agent
+# Compilar o agente
 agent = agent_builder.compile()
 
 def triage_router(state: State) -> Command[Literal["response_agent", "__end__"]]:
-    """Analyze email content to decide if we should respond, notify, or ignore.
+    """Analisa o conteúdo do email para decidir se devemos responder, notificar ou ignorar.
 
-    The triage step prevents the assistant from wasting time on:
-    - Marketing emails and spam
-    - Company-wide announcements
-    - Messages meant for other teams
+    A etapa de triagem evita que o assistente perca tempo com:
+    - Emails de marketing e spam
+    - Anúncios da empresa
+    - Mensagens destinadas a outras equipes
     """
     author, to, subject, email_thread = parse_email(state["email_input"])
     system_prompt = triage_system_prompt.format(
@@ -109,10 +109,10 @@ def triage_router(state: State) -> Command[Literal["response_agent", "__end__"]]
         author=author, to=to, subject=subject, email_thread=email_thread
     )
 
-    # Create email markdown for Agent Inbox in case of notification  
+    # Cria markdown do email para Agent Inbox em caso de notificação  
     email_markdown = format_email_markdown(subject, author, to, email_thread)
 
-    # Run the router LLM
+    # Executa o LLM roteador
     result = llm_router.invoke(
         [
             {"role": "system", "content": system_prompt},
@@ -120,37 +120,37 @@ def triage_router(state: State) -> Command[Literal["response_agent", "__end__"]]
         ]
     )
 
-    # Decision
+    # Decisão
     classification = result.classification
 
     if classification == "respond":
-        print("📧 Classification: RESPOND - This email requires a response")
+        print("📧 Classificação: RESPONDER - Este email requer uma resposta")
         goto = "response_agent"
-        # Add the email to the messages
+        # Adiciona o email às mensagens
         update = {
             "classification_decision": result.classification,
             "messages": [{"role": "user",
-                            "content": f"Respond to the email: {email_markdown}"
+                            "content": f"Responder ao email: {email_markdown}"
                         }],
         }
     elif result.classification == "ignore":
-        print("🚫 Classification: IGNORE - This email can be safely ignored")
+        print("🚫 Classificação: IGNORAR - Este email pode ser ignorado com segurança")
         update =  {
             "classification_decision": result.classification,
         }
         goto = END
     elif result.classification == "notify":
-        # If real life, this would do something else
-        print("🔔 Classification: NOTIFY - This email contains important information")
+        # Na vida real, isso faria algo diferente
+        print("🔔 Classificação: NOTIFICAR - Este email contém informações importantes")
         update = {
             "classification_decision": result.classification,
         }
         goto = END
     else:
-        raise ValueError(f"Invalid classification: {result.classification}")
+        raise ValueError(f"Classificação inválida: {result.classification}")
     return Command(goto=goto, update=update)
 
-# Build workflow
+# Construir fluxo de trabalho
 overall_workflow = (
     StateGraph(State, input=StateInput)
     .add_node(triage_router)

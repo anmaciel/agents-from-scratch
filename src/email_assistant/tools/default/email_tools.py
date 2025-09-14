@@ -4,21 +4,21 @@ from langchain_core.tools import tool
 
 @tool
 def write_email(to: str, subject: str, content: str) -> str:
-    """Write and send an email."""
-    # Placeholder response - in real app would send email
-    return f"Email sent to {to} with subject '{subject}' and content: {content}"
+    """Escrever e enviar um email."""
+    # Resposta placeholder - em aplicação real enviaria email
+    return f"Email enviado para {to} com assunto '{subject}' e conteúdo: {content}"
 
 @tool
 def triage_email(category: Literal["ignore", "notify", "respond"]) -> str:
-    """Triage an email into one of three categories: ignore, notify, respond."""
-    return f"Classification Decision: {category}"
+    """Triar um email em uma das três categorias: ignore, notify, respond."""
+    return f"Decisão de Classificação: {category}"
 
 @tool
 class Done(BaseModel):
-    """E-mail has been sent."""
+    """Email foi enviado."""
     done: bool
 
 @tool
 class Question(BaseModel):
-      """Question to ask user."""
+      """Pergunta para fazer ao usuário."""
       content: str

@@ -19,11 +19,11 @@ tools = get_tools(["write_email", "schedule_meeting", "check_calendar_availabili
 tools_by_name = get_tools_by_name(tools)
 
 # Initialize the LLM for use with router / structured output
-llm = init_chat_model("openai:gpt-4.1", temperature=0.0)
+llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0.0)
 llm_router = llm.with_structured_output(RouterSchema) 
 
 # Initialize the LLM, enforcing tool use (of any available tools) for agent
-llm = init_chat_model("openai:gpt-4.1", temperature=0.0)
+llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0.0)
 llm_with_tools = llm.bind_tools(tools, tool_choice="required")
 
 # Nodes 
@@ -64,18 +64,18 @@ def triage_router(state: State) -> Command[Literal["triage_interrupt_handler", "
 
     # Process the classification decision
     if classification == "respond":
-        print("📧 Classification: RESPOND - This email requires a response")
+        print("📧 Classificação: RESPONDER - Este email requer uma resposta")
         # Next node
         goto = "response_agent"
         # Update the state
         update = {
             "classification_decision": result.classification,
             "messages": [{"role": "user",
-                            "content": f"Respond to the email: {email_markdown}"
+                            "content": f"Responder ao email: {email_markdown}"
                         }],
         }
     elif classification == "ignore":
-        print("🚫 Classification: IGNORE - This email can be safely ignored")
+        print("🚫 Classificação: IGNORAR - Este email pode ser ignorado com segurança")
 
         # Next node
         goto = END
@@ -85,7 +85,7 @@ def triage_router(state: State) -> Command[Literal["triage_interrupt_handler", "
         }
 
     elif classification == "notify":
-        print("🔔 Classification: NOTIFY - This email contains important information") 
+        print("🔔 Classificação: NOTIFICAR - Este email contém informações importantes") 
 
         # Next node
         goto = "triage_interrupt_handler"

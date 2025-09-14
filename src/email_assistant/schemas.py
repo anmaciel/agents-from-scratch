@@ -3,23 +3,23 @@ from typing_extensions import TypedDict, Literal
 from langgraph.graph import MessagesState
 
 class RouterSchema(BaseModel):
-    """Analyze the unread email and route it according to its content."""
+    """Analisar o email não lido e roteá-lo de acordo com seu conteúdo."""
 
     reasoning: str = Field(
-        description="Step-by-step reasoning behind the classification."
+        description="Raciocínio passo a passo por trás da classificação."
     )
     classification: Literal["ignore", "respond", "notify"] = Field(
-        description="The classification of an email: 'ignore' for irrelevant emails, "
-        "'notify' for important information that doesn't need a response, "
-        "'respond' for emails that need a reply",
+        description="A classificação de um email: 'ignore' para emails irrelevantes, "
+        "'notify' para informações importantes que não precisam de resposta, "
+        "'respond' para emails que precisam de uma resposta",
     )
 
 class StateInput(TypedDict):
-    # This is the input to the state
+    # Esta é a entrada para o estado
     email_input: dict
 
 class State(MessagesState):
-    # This state class has the messages key build in
+    # Esta classe de estado tem a chave messages construída
     email_input: dict
     classification_decision: Literal["ignore", "respond", "notify"]
 
@@ -33,6 +33,6 @@ class EmailData(TypedDict):
     to_email: str
 
 class UserPreferences(BaseModel):
-    """Updated user preferences based on user's feedback."""
-    chain_of_thought: str = Field(description="Reasoning about which user preferences need to add/update if required")
-    user_preferences: str = Field(description="Updated user preferences")
+    """Preferências do usuário atualizadas baseadas no feedback do usuário."""
+    chain_of_thought: str = Field(description="Raciocínio sobre quais preferências do usuário precisam ser adicionadas/atualizadas se necessário")
+    user_preferences: str = Field(description="Preferências do usuário atualizadas")

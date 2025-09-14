@@ -1,500 +1,256 @@
-"""Email evaluation dataset with ground truth classifications."""
+"""Dataset de avaliação de emails com classificações de referência."""
 
-# Common reply email
+# Email comum de resposta
 STANDARD_EMAIL = {
-    "author": "Alice Smith <alice.smith@company.com>",
-    "to": "John Doe <john.doe@company.com>",
-    "subject": "Quick question about API documentation",
-    "email_thread": """Hi John,
+    "author": "Alice Silva <alice.silva@empresa.com.br>",
+    "to": "João Santos <joao.santos@empresa.com.br>",
+    "subject": "Dúvida rápida sobre documentação da API",
+    "email_thread": """Oi João,
 
-I was reviewing the API documentation for the new authentication service and noticed a few endpoints seem to be missing from the specs. Could you help clarify if this was intentional or if we should update the docs?
+Estava revisando a documentação da API para o novo serviço de autenticação e notei que alguns endpoints parecem estar faltando nas especificações. Pode me ajudar a esclarecer se isso foi intencional ou se devemos atualizar a documentação?
 
-Specifically, I'm looking at:
+Especificamente, estou procurando:
 - /auth/refresh
 - /auth/validate
 
-Thanks!
+Obrigada!
 Alice""",
 }
 
-# Common notification email
+# Email comum de notificação
 NOTIFICATION_EMAIL = {
-    "author": "System Admin <sysadmin@company.com>",
-    "to": "Development Team <dev@company.com>",
-    "subject": "Scheduled maintenance - database downtime",
-    "email_thread": """Hi team,
+    "author": "Admin do Sistema <sysadmin@empresa.com.br>",
+    "to": "Equipe de Desenvolvimento <dev@empresa.com.br>",
+    "subject": "Manutenção programada - indisponibilidade do banco de dados",
+    "email_thread": """Olá equipe,
 
-This is a reminder that we'll be performing scheduled maintenance on the production database tonight from 2AM to 4AM EST. During this time, all database services will be unavailable.
+Este é um lembrete de que realizaremos manutenção programada no banco de dados de produção hoje à noite das 2h às 4h. Durante este período, todos os serviços de banco de dados estarão indisponíveis.
 
-Please plan your work accordingly and ensure no critical deployments are scheduled during this window.
+Por favor, planejem seu trabalho adequadamente e garantam que não haja deployments críticos programados durante esta janela.
 
-Thanks,
-System Admin Team"""
+Obrigado,
+Equipe Admin do Sistema"""
 }
 
-# Dataset examples
+# Exemplos do dataset
 email_input_1 = {
-    "author": "Alice Smith <alice.smith@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Quick question about API documentation",
-    "email_thread": """Hi Lance,
+    "author": "Alice Silva <alice.silva@empresa.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Dúvida rápida sobre documentação da API",
+    "email_thread": """Oi Bruno,
 
-I was reviewing the API documentation for the new authentication service and noticed a few endpoints seem to be missing from the specs. Could you help clarify if this was intentional or if we should update the docs?
+Estava revisando a documentação da API para o novo serviço de autenticação e notei que alguns endpoints parecem estar faltando nas especificações. Pode me ajudar a esclarecer se isso foi intencional ou se devemos atualizar a documentação?
 
-Specifically, I'm looking at:
+Especificamente, estou procurando:
 - /auth/refresh
 - /auth/validate
 
-Thanks!
+Obrigada!
 Alice""",
 }
 
 email_input_2 = {
-    "author": "Marketing Team <marketing@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "New Company Newsletter Available",
-    "email_thread": """Hello Lance,
+    "author": "Carlos Mendes <carlos.mendes@parceiro.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Reunião para revisão do Q1 - vamos marcar?",
+    "email_thread": """Oi Bruno!
 
-The latest edition of our company newsletter is now available on the intranet. This month features articles on our Q2 results, upcoming team building activities, and employee spotlights.
+Espero que esteja tudo bem. Preciso agendar nossa reunião trimestral de revisão do Q1.
 
-Check it out when you have a chance!
+Temos bastante coisa para discutir:
+- Performance das vendas (muito boa por sinal!)
+- Planejamento do Q2
+- Novos produtos que estamos lançando
+- Orçamento para marketing digital
 
-Best regards,
-Marketing Team""",
+Tenho disponibilidade na próxima semana:
+- Terça-feira de manhã (mas prefiro evitar muito cedo)
+- Quarta-feira depois das 14h
+- Sexta-feira o dia todo
+
+A reunião deve durar umas 2 horas. Que tal fazermos presencial no escritório de SP?
+
+Abraços,
+Carlos""",
 }
 
 email_input_3 = {
-    "author": "System Admin <sysadmin@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Scheduled maintenance - database downtime",
-    "email_thread": """Hi Lance,
+    "author": "Marina Costa <marina.costa@cliente.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Status do projeto - preciso de uma atualização",
+    "email_thread": """Olá Bruno,
 
-This is a reminder that we'll be performing scheduled maintenance on the production database tonight from 2AM to 4AM EST. During this time, all database services will be unavailable.
+Estou acompanhando o desenvolvimento do projeto de integração e gostaria de uma atualização sobre o andamento.
 
-Please plan your work accordingly and ensure no critical deployments are scheduled during this window.
+Pontos específicos que preciso saber:
+1. As funcionalidades de autenticação estão funcionando?
+2. Quando podemos esperar a versão beta?
+3. Há algum bloqueio que precise da nossa ajuda?
 
-Thanks,
-System Admin Team""",
+Temos uma apresentação para a diretoria na próxima sexta e preciso de dados atualizados.
+
+Muito obrigada,
+Marina""",
 }
 
 email_input_4 = {
-    "author": "Project Manager <pm@client.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Tax season let's schedule call",
-    "email_thread": """Lance,
+    "author": "RH <rh@empresa.com.br>",
+    "to": "Todos <todos@empresa.com.br>",
+    "subject": "Lembrete: Prazo para entrega de documentos",
+    "email_thread": """Caros colaboradores,
 
-It's tax season again, and I wanted to schedule a call to discuss your tax planning strategies for this year. I have some suggestions that could potentially save you money.
+Este é um lembrete de que o prazo para entrega dos documentos do benefício médico é 15 de outubro.
 
-Are you available sometime next week? Tuesday or Thursday afternoon would work best for me, for about 45 minutes.
+Documentos necessários:
+- Comprovante de renda atualizado
+- Documentos dos dependentes
+- Formulário preenchido
 
-Regards,
-Project Manager""",
+Favor enviar para rh@empresa.com.br até a data limite.
+
+Atenciosamente,
+Departamento de RH"""
 }
 
 email_input_5 = {
-    "author": "HR Department <hr@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Reminder: Submit your expense reports",
-    "email_thread": """Hello Lance,
+    "author": "GitHub <noreply@github.com>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "[langchain] Nova pull request #1234",
+    "email_thread": """
+Pull Request #1234: Implementar autenticação OAuth2
 
-This is a friendly reminder that all expense reports for the previous month need to be submitted by this Friday. Please make sure to include all receipts and proper documentation.
+Detalhes:
+- Autor: desenvolvedor@empresa.com.br
+- Estado: Aberto
+- Arquivos alterados: 15
+- Linhas adicionadas: +245, -12
 
-If you have any questions about the submission process, feel free to reach out to the HR team.
+Ver no GitHub: https://github.com/langchain/repo/pull/1234
 
-Best regards,
-HR Department""",
+Esta é uma notificação automática do GitHub.
+"""
 }
 
 email_input_6 = {
-    "author": "Conference Organizer <events@techconf.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Do you want to attend this conference?",
-    "email_thread": """Hi Lance,
+    "author": "Ana Souza <ana@empresa.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Bug crítico no sistema de pagamentos",
+    "email_thread": """Oi Bruno,
 
-We're reaching out to invite you to TechConf 2025, happening May 15-17 in San Francisco. 
+Identificamos um bug crítico no sistema de pagamentos que está afetando as transações dos clientes.
 
-The conference features keynote speakers from major tech companies, workshops on AI and ML, and great networking opportunities. Early bird registration is available until April 30th.
+Detalhes do problema:
+- Transações estão falhando com erro 500
+- Começou por volta das 14h30
+- Afetando aprox. 30% das tentativas
+- Log de erro em anexo
 
-Would you be interested in attending? We can also arrange for group discounts if other team members want to join.
+Preciso que você analise urgentemente. Os clientes estão reclamando e perdemos algumas vendas.
 
-Best regards,
-Conference Organizers""",
+Obrigada,
+Ana"""
 }
 
 email_input_7 = {
-    "author": "Sarah Johnson <sarah.j@partner.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Can you review these docs before submission?",
-    "email_thread": """Lance,
+    "author": "Marketing <marketing@empresa.com.br>",
+    "to": "Equipe Desenvolvimento <dev@empresa.com.br>",
+    "subject": "Newsletter Semanal - Novidades da Empresa",
+    "email_thread": """Olá pessoal!
 
-I've attached the final version of our proposal for the Henderson project. Could you please review the technical specifications section (pages 15-20) before we submit it to the client on Friday?
+Confira as principais novidades desta semana:
 
-Your expertise would really help ensure we've covered all the necessary details.
+🚀 Lançamos a nova funcionalidade de relatórios
+📈 Crescimento de 15% nas vendas este mês
+👥 Bem-vindos aos novos membros da equipe
+🎉 Festa da empresa será no dia 25!
 
-Thanks in advance,
-Sarah""",
+Acompanhem mais detalhes no portal interno.
+
+Equipe de Marketing"""
 }
 
 email_input_8 = {
-    "author": "Community Pool <info@cityrecreation.org>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Sign up daughter for swimming class",
-    "email_thread": """Dear Lance,
+    "author": "Suporte Técnico <suporte@fornecedor.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Resposta ao ticket #AB123 - Problema resolvido",
+    "email_thread": """Olá Bruno,
 
-Summer swimming registration is now open! Based on your daughter's participation last year, we wanted to let you know that intermediate level classes are available on Mondays and Wednesdays at 4PM or Tuesdays and Thursdays at 5PM.
+Referente ao seu ticket #AB123 sobre a instabilidade no servidor.
 
-Classes begin June 1st and run for 8 weeks. Space is limited, so early registration is recommended.
+Resolução aplicada:
+✅ Identificamos alta utilização de memória
+✅ Otimizamos as consultas do banco
+✅ Reiniciamos os serviços afetados
+✅ Sistema está funcionando normalmente
 
-Please let us know if you'd like to reserve a spot.
+O monitoramento continuará por 24h para garantir estabilidade.
 
-Regards,
-City Recreation Department""",
+Caso tenha outras questões, entre em contato.
+
+Atenciosamente,
+Equipe de Suporte"""
 }
 
 email_input_9 = {
-    "author": "GitHub <notifications@github.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "PR #42: Comment from alex-dev",
-    "email_thread": """Hey there!
+    "author": "Esposa <maria@email.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Não esqueça: consulta médica hoje às 16h",
+    "email_thread": """Oi amor,
 
-alex-dev commented on your pull request #42 in langchain-ai/project:
+Só lembrando que você tem consulta com o Dr. Silva hoje às 16h.
 
-> I've reviewed the changes and everything looks good. Just one small suggestion for the error handling in auth_controller.py. Maybe we should add a timeout parameter to prevent hanging requests?
+A clínica fica na Av. Paulista, 1000 - sala 502.
 
-View the comment: https://github.com/langchain-ai/project/pull/42#comment-12345
+Leva os exames que fizemos semana passada.
 
----
-You're receiving this because you authored the thread.
-Reply to this email directly, or view it on GitHub
-""",
+Beijo,
+Maria"""
 }
 
 email_input_10 = {
-    "author": "Team Lead <teamlead@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Quarterly planning meeting",
-    "email_thread": """Hi Lance,
+    "author": "TechConf Brasil <info@techconf.com.br>",
+    "to": "Bruno Martins <bruno@empresa.com.br>",
+    "subject": "Últimos dias! Desconto early bird - TechConf 2024",
+    "email_thread": """Olá Bruno!
 
-It's time for our quarterly planning session. I'd like to schedule a 90-minute meeting next week to discuss our roadmap for Q3.
+⏰ Restam apenas 3 dias para aproveitar o desconto early bird da TechConf 2024!
 
-Could you let me know your availability for Monday or Wednesday? Ideally sometime between 10AM and 3PM.
+🎟️ Desconto de 40% válido até 20/10
+🗣️ Mais de 50 palestras sobre IA, Cloud e DevOps
+🌟 Speakers internacionais confirmados
+📍 São Paulo Convention Center
 
-Looking forward to your input on the new feature priorities.
+Garante sua vaga: www.techconf.com.br
 
-Best,
-Team Lead""",
+Não perca essa oportunidade!
+
+Equipe TechConf Brasil"""
 }
 
-email_input_11 = {
-    "author": "AWS Monitoring <no-reply@aws.amazon.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "System admin alert: Instance CPU utilization exceeds threshold",
-    "email_thread": """ALERT: High CPU Utilization
-
-The following EC2 instance has exceeded the CPU utilization threshold of 90% for more than 15 minutes:
-
-Instance ID: i-0b2d3e4f5a6b7c8d9
-Region: us-west-2
-Current utilization: 95.3%
-
-This message is automatically generated. Please do not reply.
-""",
-}
-
-email_input_12 = {
-    "author": "Client Success <success@vendor.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Your subscription will renew automatically",
-    "email_thread": """Hello Lance,
-
-This is a friendly reminder that your annual subscription to our Developer Pro plan will automatically renew on 04/15/2025.
-
-Your payment method ending in **** 4567 will be charged $1,499.00.
-
-If you would like to make any changes to your subscription, please visit your account settings or contact our support team before the renewal date.
-
-Thank you for your continued business!
-
-Client Success Team""",
-}
-
-email_input_13 = {
-    "author": "Dr. Roberts <droberts@medical.org>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Annual checkup reminder",
-    "email_thread": """Hello Lance,
-
-This is a reminder that it's time for your annual checkup. Our records show that your last visit was approximately one year ago.
-
-Please call our office at (555) 123-4567 to schedule an appointment at your earliest convenience.
-
-Best regards,
-Dr. Roberts' Office""",
-}
-
-email_input_14 = {
-    "author": "Social Media Platform <notifications@social.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "5 people liked your post",
-    "email_thread": """Hi Lance,
-
-5 people liked your recent post about "Machine Learning Techniques for NLP"
-
-See who liked your post and continue the conversation!
-
-[View activity]
-
-To unsubscribe from these notifications, adjust your settings here.
-""",
-}
-
-email_input_15 = {
-    "author": "Project Team <project@company.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Joint presentation next month",
-    "email_thread": """Hi Lance,
-
-The leadership team has asked us to prepare a joint presentation on our recent project successes for the all-hands meeting next month.
-
-I've started putting together some slides and would appreciate your input on the technical architecture section. Could we schedule about 60 minutes sometime in the next week to collaborate on this?
-
-I'm generally free on Tuesdays and Thursdays.
-
-Thanks,
-Project Team""",
-}
-
-email_input_16 = {
-    "author": "Marketing Team <marketing@openai.com>",
-    "to": "Lance Martin <lance@company.com>",
-    "subject": "Newsletter: New Model from OpenAI",
-    "email_thread": """Hi Lance,
-
-We're excited to announce that we've released a new model from OpenAI!
-
-It's called "GPT-5" and it's a successor to GPT-4.
-
-It's available now and you can find more information [here](https://openai.com/gpt-5).
-
-Thanks,
-Marketing Team""",
-}
-
-# Triage outputs: "ignore", "notify", "respond"
-triage_output_1 = "respond"
-triage_output_2 = "ignore"
-triage_output_3 = "notify"
-triage_output_4 = "respond"
-triage_output_5 = "notify"
-triage_output_6 = "respond"
-triage_output_7 = "respond"
-triage_output_8 = "respond"
-triage_output_9 = "notify"
-triage_output_10 = "respond"
-triage_output_11 = "notify"
-triage_output_12 = "notify"
-triage_output_13 = "respond"
-triage_output_14 = "ignore"
-triage_output_15 = "respond"
-triage_output_16 = "notify"
-
-# Response criteria (when applicable)
-response_criteria_1 = """
-• Send email with write_email tool call to acknowledge the question and confirm it will be investigated  
-"""
-
-response_criteria_2 = """
-• No response needed
-• Ensure this is ignored  
-"""
-
-response_criteria_3 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-response_criteria_4 = """
-• Check calendar availability for Tuesday or Thursday afternoon next week with check_calendar_availability tool call 
-• Confirm availability for a 45-minute meeting
-• Send calendar invite with schedule_meeting tool call 
-• Send email with write_email tool call to acknowledge tax planning request and notifying that a meeting has been scheduled  
-"""
-
-response_criteria_5 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-response_criteria_6 = """
-• Express interest in attending TechConf 2025
-• Ask specific questions about AI/ML workshops
-• Inquire about group discount details
-• Send email with write_email tool call to express interest in attending TechConf 2025, ask specific questions about AI/ML workshops, and inquire about group discount details
-"""
-
-response_criteria_7 = """
-• Explicitly agree to review the technical specifications
-• Acknowledge Friday deadline
-• Send email with write_email tool call to explicitly agree to review the technical specifications and acknowledge Friday deadline
-"""
-
-response_criteria_8 = """
-• Send email with write_email tool call to express interest in registering daughter for swimming class
-"""
-
-response_criteria_9 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-response_criteria_10 = """
-• Check calendar for 90-minute meeting availability for Monday or Wednesday with check_calendar_availability tool call 
-• Send email acknowledging the request and providing availability with write_email tool call  
-"""
-
-response_criteria_11 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-response_criteria_12 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-response_criteria_13 = """
-• Acknowledge annual checkup reminder
-• Send email with write_email tool call to acknowledge annual checkup reminder
-"""
-
-response_criteria_14 = """
-• No response needed
-• Ensure this is ignored  
-"""
-
-response_criteria_15 = """
-• Check calendar for 60-minute meeting availability for Tuesday or Thursday with check_calendar_availability tool call 
-• Send calendar invite with schedule_meeting tool call 
-• Send email agreeing to collaborate on the joint presentation and notifying that a meeting has been scheduled with write_email tool call  
-"""
-
-response_criteria_16 = """
-• No response needed
-• Ensure the user is notified  
-"""
-
-examples_triage = [
-  {
-      "inputs": {"email_input": email_input_1},
-      "outputs": {"classification": triage_output_1},
-  },
-  {
-      "inputs": {"email_input": email_input_2},
-      "outputs": {"classification": triage_output_2},
-  },
-  {
-      "inputs": {"email_input": email_input_3},
-      "outputs": {"classification": triage_output_3},
-  },
-  {
-      "inputs": {"email_input": email_input_4},
-      "outputs": {"classification": triage_output_4},
-  },
-  {
-      "inputs": {"email_input": email_input_5},
-      "outputs": {"classification": triage_output_5},
-  },
-  {
-      "inputs": {"email_input": email_input_6},
-      "outputs": {"classification": triage_output_6},
-  },
-  {
-      "inputs": {"email_input": email_input_7},
-      "outputs": {"classification": triage_output_7},
-  },
-  {
-      "inputs": {"email_input": email_input_8},
-      "outputs": {"classification": triage_output_8},
-  },
-  {
-      "inputs": {"email_input": email_input_9},
-      "outputs": {"classification": triage_output_9},
-  },
-  {
-      "inputs": {"email_input": email_input_10},
-      "outputs": {"classification": triage_output_10},
-  },
-  {
-      "inputs": {"email_input": email_input_11},
-      "outputs": {"classification": triage_output_11},
-  },
-  {
-      "inputs": {"email_input": email_input_12},
-      "outputs": {"classification": triage_output_12},
-  },
-  {
-      "inputs": {"email_input": email_input_13},
-      "outputs": {"classification": triage_output_13},
-  },
-  {
-      "inputs": {"email_input": email_input_14},
-      "outputs": {"classification": triage_output_14},
-  },
-  {
-      "inputs": {"email_input": email_input_15},
-      "outputs": {"classification": triage_output_15},
-  },
-  {
-      "inputs": {"email_input": email_input_16},
-      "outputs": {"classification": triage_output_16},
-  },
+# Lista de exemplos de email
+EMAIL_DATASET = [
+    email_input_1,
+    email_input_2,
+    email_input_3,
+    email_input_4,
+    email_input_5,
+    email_input_6,
+    email_input_7,
+    email_input_8,
+    email_input_9,
+    email_input_10,
 ]
 
-email_inputs = [
-        email_input_1, email_input_2, email_input_3, email_input_4, email_input_5,
-        email_input_6, email_input_7, email_input_8, email_input_9, email_input_10,
-        email_input_11, email_input_12, email_input_13, email_input_14, email_input_15,
-        email_input_16
-    ]
-
-email_names = [
-    "email_input_1", "email_input_2", "email_input_3", "email_input_4", "email_input_5",
-    "email_input_6", "email_input_7", "email_input_8", "email_input_9", "email_input_10",
-    "email_input_11", "email_input_12", "email_input_13", "email_input_14", "email_input_15",
-    "email_input_16"
-]
-
-response_criteria_list = [
-    response_criteria_1, response_criteria_2, response_criteria_3, response_criteria_4, response_criteria_5,
-    response_criteria_6, response_criteria_7, response_criteria_8, response_criteria_9, response_criteria_10,
-    response_criteria_11, response_criteria_12, response_criteria_13, response_criteria_14, response_criteria_15,
-    response_criteria_16
-]
-
-triage_outputs_list = [
-    triage_output_1, triage_output_2, triage_output_3, triage_output_4, triage_output_5,
-    triage_output_6, triage_output_7, triage_output_8, triage_output_9, triage_output_10,
-    triage_output_11, triage_output_12, triage_output_13, triage_output_14, triage_output_15,
-    triage_output_16
-]
-
-# Define expected tool calls for each email response based on content analysis
-# Options: write_email, schedule_meeting, check_calendar_availability, done
-expected_tool_calls = [
-    ["write_email", "done"],                                                 # email_input_1: API documentation question
-    [],                                                                      # email_input_2: Newsletter notification - ignore
-    [],                                                                      # email_input_3: System maintenance notification - notification only
-    ["check_calendar_availability", "schedule_meeting", "write_email", "done"], # email_input_4: Tax call scheduling
-    [],                                                                      # email_input_5: Expense report reminder - notification only
-    ["write_email", "done"],                                                 # email_input_6: Conference invitation - needs response
-    ["write_email", "done"],                                                 # email_input_7: Document review request
-    ["write_email", "done"],                                                 # email_input_8: Swimming class registration
-    [],                                                                      # email_input_9: GitHub PR comment - notification only
-    ["check_calendar_availability", "write_email", "done"], # email_input_10: Planning meeting
-    [],                                                                      # email_input_11: AWS alert - notification only
-    [],                                                                      # email_input_12: Subscription renewal - ignore
-    ["write_email", "done"],                                                 # email_input_13: Doctor appointment reminder
-    [],                                                                      # email_input_14: Social media notification - no action needed
-    ["check_calendar_availability", "schedule_meeting", "write_email", "done"], # email_input_15: Joint presentation
-    [],                                                                      # email_input_16: Newsletter - notification only
-]
+# Classificações esperadas para o dataset
+EXPECTED_CLASSIFICATIONS = {
+    "email_input_1": "respond",  # Pergunta técnica direta
+    "email_input_2": "respond",  # Solicitação de reunião
+    "email_input_3": "respond",  # Consulta de cliente sobre projeto
+    "email_input_4": "notify",   # Lembrete de RH - importante mas não requer resposta
+    "email_input_5": "notify",   # Notificação do GitHub
+    "email_input_6": "respond",  # Bug crítico - requer ação
+    "email_input_7": "ignore",   # Newsletter de marketing
+    "email_input_8": "notify",   # Confirmação de resolução de ticket
+    "email_input_9": "respond",  # Lembrete pessoal da família
+    "email_input_10": "ignore", # Email promocional/marketing
+}

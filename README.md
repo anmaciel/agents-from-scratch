@@ -1,124 +1,132 @@
-# Agents From Scratch 
+# Agentes do Zero
 
-The repo is a guide to building agents from scratch. It builds up to an ["ambient"](https://blog.langchain.dev/introducing-ambient-agents/) agent that can manage your email with connection to the Gmail API. It's grouped into 4 sections, each with a notebook and accompanying code in the `src/email_assistant` directory. These section build from the basics of agents, to agent evaluation, to human-in-the-loop, and finally to memory. These all come together in an agent that you can deploy, and the principles can be applied to other agents across a wide range of tasks. 
+Este repositório é um guia para construir agentes do zero. Evolui até um agente ["ambiente"](https://blog.langchain.dev/introducing-ambient-agents/) que pode gerenciar seus emails com conexão à API do Gmail. Está organizado em 4 seções, cada uma com um notebook e código correspondente no diretório `src/email_assistant`. Essas seções constroem desde os conceitos básicos de agentes, até avaliação de agentes, human-in-the-loop, e finalmente memória. Tudo isso se combina em um agente que você pode implantar, e os princípios podem ser aplicados a outros agentes em uma ampla gama de tarefas.
 
 ![overview](notebooks/img/overview.png)
 
-## Environment Setup 
+## Configuração do Ambiente
 
-### Python Version
+### Versão do Python
 
-* Ensure you're using Python 3.11 or later. 
-* This version is required for optimal compatibility with LangGraph. 
+* Certifique-se de estar usando Python 3.11 ou superior.
+* Esta versão é necessária para compatibilidade otimizada com LangGraph.
 
 ```shell
 python3 --version
 ```
 
-### API Keys
+### Chaves de API
 
-* If you don't have an OpenAI API key, you can sign up [here](https://openai.com/index/openai-api/).
-* Sign up for LangSmith [here](https://smith.langchain.com/).
-* Generate a LangSmith API key.
+* Se você não tem uma chave da API do Gemini, [você pode se inscrever](https://makersuite.google.com/).
+* [Inscreva-se no LangSmith](https://smith.langchain.com/).
+* Gere uma chave de API do LangSmith.
 
-### Set Environment Variables
+### Definir Variáveis de Ambiente
 
-* Create a `.env` file in the root directory:
+* Crie um arquivo `.env` no diretório raiz:
+
 ```shell
-# Copy the .env.example file to .env
+# Copie o arquivo .env.example para .env
 cp .env.example .env
 ```
 
-* Edit the `.env` file with the following:
+* Edite o arquivo `.env` com o seguinte:
+
 ```shell
-LANGSMITH_API_KEY=your_langsmith_api_key
+LANGSMITH_API_KEY=sua_chave_api_langsmith
 LANGSMITH_TRACING=true
 LANGSMITH_PROJECT="interrupt-workshop"
-OPENAI_API_KEY=your_openai_api_key
+GOOGLE_API_KEY=sua_chave_api_google
 ```
 
-* You can also set the environment variables in your terminal:
+* Você também pode definir as variáveis de ambiente no seu terminal:
+
 ```shell
-export LANGSMITH_API_KEY=your_langsmith_api_key
+export LANGSMITH_API_KEY=sua_chave_api_langsmith
 export LANGSMITH_TRACING=true
-export OPENAI_API_KEY=your_openai_api_key
+export GOOGLE_API_KEY=sua_chave_api_google
 ```
 
-### Package Installation
+### Instalação de Pacotes
 
-**Recommended: Using uv (faster and more reliable)**
+**Recomendado: Usando uv (mais rápido e confiável)*
 
 ```shell
-# Install uv if you haven't already
+# Instale uv se ainda não tiver
 pip install uv
 
-# Install the package with development dependencies
+# Instale o pacote com dependências de desenvolvimento
 uv sync --extra dev
 
-# Activate the virtual environment
+# Ative o ambiente virtual
 source .venv/bin/activate
 ```
 
-**Alternative: Using pip**
+**Alternativa: Usando pip*
 
 ```shell
 $ python3 -m venv .venv
 $ source .venv/bin/activate
-# Ensure you have a recent version of pip (required for editable installs with pyproject.toml)
+# Certifique-se de ter uma versão recente do pip (necessário para instalações editáveis com pyproject.toml)
 $ python3 -m pip install --upgrade pip
-# Install the package in editable mode
+# Instale o pacote no modo editável
 $ pip install -e .
 ```
 
-> **⚠️ IMPORTANT**: Do not skip the package installation step! This editable install is **required** for the notebooks to work correctly. The package is installed as `interrupt_workshop` with import name `email_assistant`, allowing you to import from anywhere with `from email_assistant import ...`
+> **⚠️ IMPORTANTE**: Não pule a etapa de instalação do pacote! Esta instalação editável é **obrigatória** para os notebooks funcionarem corretamente. O pacote é instalado como `interrupt_workshop` com nome de import `email_assistant`, permitindo que você importe de qualquer lugar com `from email_assistant import ...`
 
-## Structure 
+## Estrutura
 
-The repo is organized into the 4 sections, with a notebook for each and accompanying code in the `src/email_assistant` directory.
+O repositório está organizado em 4 seções, com um notebook para cada uma e código acompanhante no diretório `src/email_assistant`.
 
-### Preface: LangGraph 101
-For a brief introduction to LangGraph and some of the concepts used in this repo, see the [LangGraph 101 notebook](notebooks/langgraph_101.ipynb). This notebook explains the basics of chat models, tool calling, agents vs workflows, LangGraph nodes / edges / memory, and LangGraph Studio.
+### Prefácio: LangGraph 101
 
-### Building an agent 
+Para uma breve introdução ao LangGraph e alguns dos conceitos usados neste repositório, veja o [notebook LangGraph 101](notebooks/langgraph_101.ipynb). Este notebook explica o básico de modelos de chat, chamada de ferramentas, agentes vs fluxos de trabalho, nós / arestas / memória do LangGraph, e LangGraph Studio.
+
+### Construindo um agente
+
 * Notebook: [notebooks/agent.ipynb](/notebooks/agent.ipynb)
-* Code: [src/email_assistant/email_assistant.py](/src/email_assistant/email_assistant.py)
+* Código: [src/email_assistant/email_assistant.py](/src/email_assistant/email_assistant.py)
 
 ![overview-agent](notebooks/img/overview_agent.png)
 
-This notebook shows how to build the email assistant, combining an [email triage step](https://langchain-ai.github.io/langgraph/tutorials/workflows/) with an agent that handles the email response. You can see the linked code for the full implementation in `src/email_assistant/email_assistant.py`.
+Este notebook mostra como construir o assistente de email, combinando uma [etapa de triagem de email](https://langchain-ai.github.io/langgraph/tutorials/workflows/) com um agente que gerencia a resposta do email. Você pode ver o código vinculado para a implementação completa em `src/email_assistant/email_assistant.py`.
 
 ![Screenshot 2025-04-04 at 4 06 18 PM](notebooks/img/studio.png)
 
-### Evaluation 
+### Evaluation
+
 * Notebook: [notebooks/evaluation.ipynb](/notebooks/evaluation.ipynb)
 
 ![overview-eval](notebooks/img/overview_eval.png)
 
-This notebook introduces evaluation with an email dataset in [eval/email_dataset.py](/eval/email_dataset.py). It shows how to run evaluations using Pytest and the LangSmith `evaluate` API. It runs evaluation for emails responses using LLM-as-a-judge as well as evaluations for tools calls and triage decisions.
+Este notebook introduz a avaliação com um conjunto de dados de email em [eval/email_dataset.py](/eval/email_dataset.py). Mostra como executar avaliações usando Pytest e a API `evaluate` do LangSmith. Executa avaliação para respostas de email usando LLM-como-juiz, bem como avaliações para chamadas de ferramentas e decisões de triagem.
 
 ![Screenshot 2025-04-08 at 8 07 48 PM](notebooks/img/eval.png)
 
-### Human-in-the-loop 
+### Human-in-the-loop
+
 * Notebook: [notebooks/hitl.ipynb](/notebooks/hitl.ipynb)
 * Code: [src/email_assistant/email_assistant_hitl.py](/src/email_assistant/email_assistant_hitl.py)
 
 ![overview-hitl](notebooks/img/overview_hitl.png)
 
-This notebooks shows how to add human-in-the-loop (HITL), allowing the user to review specific tool calls (e.g., send email, schedule meeting). For this, we use [Agent Inbox](https://github.com/langchain-ai/agent-inbox) as an interface for human in the loop. You can see the linked code for the full implementation in [src/email_assistant/email_assistant_hitl.py](/src/email_assistant/email_assistant_hitl.py).
+Este notebook mostra como adicionar human-in-the-loop (HITL), permitindo ao usuário revisar chamadas específicas de ferramentas (por exemplo, enviar email, agendar reunião). Para isso, usamos o [Agent Inbox](https://github.com/langchain-ai/agent-inbox) como interface para human in the loop. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl.py](/src/email_assistant/email_assistant_hitl.py).
 
 ![Agent Inbox showing email threads](notebooks/img/agent-inbox.png)
 
-### Memory  
+### Memory
+
 * Notebook: [notebooks/memory.ipynb](/notebooks/memory.ipynb)
 * Code: [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py)
 
-![overview-memory](notebooks/img/overview_memory.png)  
+![overview-memory](notebooks/img/overview_memory.png)
 
-This notebook shows how to add memory to the email assistant, allowing it to learn from user feedback and adapt to preferences over time. The memory-enabled assistant ([email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py)) uses the [LangGraph Store](https://langchain-ai.github.io/langgraph/concepts/memory/#long-term-memory) to persist memories. You can see the linked code for the full implementation in [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py).
+Este notebook mostra como adicionar memória ao assistente de email, permitindo que aprenda com feedback do usuário e adapte-se às preferências ao longo do tempo. O assistente com memória habilitada ([email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py)) usa o [LangGraph Store](https://langchain-ai.github.io/langgraph/concepts/memory/#long-term-memory) para persistir memórias. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py).
 
-## Connecting to APIs  
+## Connecting to APIs
 
-The above notebooks using mock email and calendar tools. 
+The above notebooks using mock email and calendar tools.
 
 ### Gmail Integration and Deployment
 
@@ -130,7 +138,7 @@ The full implementation of the Gmail integration is in [src/email_assistant/emai
 
 ## Running Tests
 
-The repository includes an automated test suite to evaluate the email assistant. 
+The repository includes an automated test suite to evaluate the email assistant.
 
 Tests verify correct tool usage and response quality using LangSmith for tracking.
 
@@ -143,14 +151,16 @@ python tests/run_all_tests.py
 ### Test Results
 
 Test results are logged to LangSmith under the project name specified in your `.env` file (`LANGSMITH_PROJECT`). This provides:
-- Visual inspection of agent traces
-- Detailed evaluation metrics
-- Comparison of different agent implementations
+
+* Visual inspection of agent traces
+* Detailed evaluation metrics
+* Comparison of different agent implementations
 
 ### Available Test Implementations
 
 The available implementations for testing are:
-- `email_assistant` - Basic email assistant
+
+* `email_assistant` - Basic email assistant
 
 ### Testing Notebooks
 
@@ -167,8 +177,6 @@ pytest tests/test_notebooks.py -v
 ## Future Extensions
 
 Add [LangMem](https://langchain-ai.github.io/langmem/) to manage memories:
-* Manage a collection of background memories. 
-* Add memory tools that can look up facts in the background memories. 
 
-
-
+* Manage a collection of background memories.
+* Add memory tools that can look up facts in the background memories.
