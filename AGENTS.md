@@ -15,7 +15,7 @@ This repository demonstrates building agents using LangGraph, focusing on an ema
 **Recommended: Using uv (faster and more reliable)*
 
 ```bash
-# Install uv if you haven't already
+# Instale o uv se ainda não tiver
 pip install uv
 
 # Install the package with development dependencies
@@ -82,7 +82,7 @@ python tests/run_all_tests.py --all
 
 ### Testing Notebooks
 
-Test all notebooks to ensure they run without errors:
+Teste todos os notebooks para garantir que executem sem erros:
 
 ```bash
 # Run all notebook tests directly

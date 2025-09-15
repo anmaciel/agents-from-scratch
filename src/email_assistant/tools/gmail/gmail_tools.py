@@ -1,6 +1,6 @@
 """
-Gmail tools implementation module. 
-This module formats the Gmail API functions into LangChain tools.
+Módulo de implementação de ferramentas Gmail.
+Este módulo formata as funções da API Gmail em ferramentas LangChain.
 """
 
 import os
@@ -15,16 +15,16 @@ from pathlib import Path
 from pydantic import Field, BaseModel
 from langchain_core.tools import tool
 
-# Setup basic logging
+# Configurar logging básico
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Define paths for credentials and tokens
+# Definir caminhos para credenciais e tokens
 _ROOT = Path(__file__).parent.absolute()
 _SECRETS_DIR = _ROOT / ".secrets"
 
-# We need to try importing the Gmail API libraries
-# If they're not available, we'll use a mock implementation
+# Precisamos tentar importar as bibliotecas da API Gmail
+# Se não estiverem disponíveis, usaremos uma implementação mock
 try:
     import logging
     from googleapiclient.discovery import build
@@ -35,24 +35,24 @@ try:
     from google_auth_oauthlib.flow import InstalledAppFlow
     from google.auth.transport.requests import Request
     
-    # Setup logging
+    # Configurar logging
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
     
-    # Email content extraction function
+    # Função de extração de conteúdo de email
     def extract_message_part(payload):
-        """Extract content from a message part."""
+        """Extrair conteúdo de uma parte da mensagem."""
         if payload.get("body", {}).get("data"):
-            # Handle base64 encoded content
+            # Tratar conteúdo codificado em base64
             data = payload["body"]["data"]
             decoded = base64.urlsafe_b64decode(data).decode("utf-8")
             return decoded
             
-        # Handle multipart messages
+        # Tratar mensagens multipart
         if payload.get("parts"):
             text_parts = []
             for part in payload["parts"]:
-                # Recursively process parts
+                # Processar partes recursivamente
                 content = extract_message_part(part)
                 if content:
                     text_parts.append(content)
@@ -60,29 +60,29 @@ try:
             
         return ""
     
-    # Function to get credentials from token.json or environment variables
+    # Função para obter credenciais do token.json ou variáveis de ambiente
     def get_credentials(gmail_token=None, gmail_secret=None):
         """
-        Get Gmail API credentials from token.json or environment variables.
-        
-        This function attempts to load credentials from multiple sources in this order:
-        1. Directly passed gmail_token and gmail_secret parameters
-        2. Environment variables GMAIL_TOKEN and GMAIL_SECRET
-        3. Local files at token_path (.secrets/token.json) and secrets_path (.secrets/secrets.json)
-        
+        Obter credenciais da API Gmail do token.json ou variáveis de ambiente.
+
+        Esta função tenta carregar credenciais de múltiplas fontes nesta ordem:
+        1. Parâmetros gmail_token e gmail_secret passados diretamente
+        2. Variáveis de ambiente GMAIL_TOKEN e GMAIL_SECRET
+        3. Arquivos locais em token_path (.secrets/token.json) e secrets_path (.secrets/secrets.json)
+
         Args:
-            gmail_token: Optional JSON string containing token data
-            gmail_secret: Optional JSON string containing credentials
-            
+            gmail_token: String JSON opcional contendo dados do token
+            gmail_secret: String JSON opcional contendo credenciais
+
         Returns:
-            Google OAuth2 Credentials object or None if credentials can't be loaded
+            Objeto Google OAuth2 Credentials ou None se as credenciais não puderem ser carregadas
         """
         token_path = _SECRETS_DIR / "token.json"
         token_data = None
         
-        # Try to get token data from various sources
+        # Tentar obter dados do token de várias fontes
         if gmail_token:
-            # 1. Use directly passed token parameter if available
+            # 1. Usar parâmetro de token passado diretamente se disponível
             try:
                 token_data = json.loads(gmail_token) if isinstance(gmail_token, str) else gmail_token
                 logger.info("Using directly provided gmail_token parameter")
@@ -90,7 +90,7 @@ try:
                 logger.warning(f"Could not parse provided gmail_token: {str(e)}")
                 
         if token_data is None:
-            # 2. Try environment variable
+            # 2. Tentar variável de ambiente
             env_token = os.getenv("GMAIL_TOKEN")
             if env_token:
                 try:
@@ -100,7 +100,7 @@ try:
                     logger.warning(f"Could not parse GMAIL_TOKEN environment variable: {str(e)}")
         
         if token_data is None:
-            # 3. Try local file
+            # 3. Tentar arquivo local
             if os.path.exists(token_path):
                 try:
                     with open(token_path, "r") as f:
@@ -109,7 +109,7 @@ try:
                 except Exception as e:
                     logger.warning(f"Could not load token from {token_path}: {str(e)}")
         
-        # If we couldn't get token data from any source, return None
+        # Se não conseguirmos obter dados do token de nenhuma fonte, retornar None
         if token_data is None:
             logger.error("Could not find valid token data in any location")
             return None
@@ -117,7 +117,7 @@ try:
         try:
             from google.oauth2.credentials import Credentials
             
-            # Create credentials object with specific format
+            # Criar objeto de credenciais com formato específico
             credentials = Credentials(
                 token=token_data.get("token"),
                 refresh_token=token_data.get("refresh_token"),
@@ -127,7 +127,7 @@ try:
                 scopes=token_data.get("scopes", ["https://www.googleapis.com/auth/gmail.modify"])
             )
             
-            # Add authorize method to make it compatible with old code
+            # Adicionar método authorize para torná-lo compatível com código antigo
             credentials.authorize = lambda request: request
             
             return credentials
@@ -135,17 +135,17 @@ try:
             logger.error(f"Error creating credentials object: {str(e)}")
             return None
     
-    # Type alias for better readability
+    # Alias de tipo para melhor legibilidade
     EmailData = Dict[str, Any]
     
     GMAIL_API_AVAILABLE = True
     
 except ImportError:
-    # If Gmail API libraries aren't available, set flag to use mock implementation
+    # Se as bibliotecas da API Gmail não estiverem disponíveis, definir flag para usar implementação mock
     GMAIL_API_AVAILABLE = False
     logger = logging.getLogger(__name__)
 
-# Helper function that is used by the tool and can be imported elsewhere
+# Função auxiliar que é usada pela ferramenta e pode ser importada em outros lugares
 def fetch_group_emails(
     email_address: str,
     minutes_since: int = 30,
@@ -155,22 +155,22 @@ def fetch_group_emails(
     skip_filters: bool = False,
 ) -> Iterator[Dict[str, Any]]:
     """
-    Fetch recent emails from Gmail that involve the specified email address.
-    
-    This function retrieves emails where the specified address is either a sender
-    or recipient, processes them, and returns them in a format suitable for the
-    email assistant to process.
-    
+    Buscar emails recentes do Gmail que envolvem o endereço de email especificado.
+
+    Esta função recupera emails onde o endereço especificado é remetente
+    ou destinatário, os processa e os retorna em um formato adequado para o
+    assistente de email processar.
+
     Args:
-        email_address: Email address to fetch messages for
-        minutes_since: Only retrieve emails newer than this many minutes
-        gmail_token: Optional token for Gmail API authentication
-        gmail_secret: Optional credentials for Gmail API authentication
-        include_read: Whether to include already read emails (default: False)
-        skip_filters: Skip thread and sender filtering (return all messages, default: False)
-        
+        email_address: Endereço de email para buscar mensagens
+        minutes_since: Recuperar apenas emails mais novos que esta quantidade de minutos
+        gmail_token: Token opcional para autenticação da API Gmail
+        gmail_secret: Credenciais opcionais para autenticação da API Gmail
+        include_read: Se deve incluir emails já lidos (padrão: False)
+        skip_filters: Pular filtragem de thread e remetente (retornar todas as mensagens, padrão: False)
+
     Yields:
-        Dict objects containing processed email information
+        Objetos Dict contendo informações de email processadas
     """
     use_mock = False
     
@@ -442,34 +442,34 @@ def fetch_group_emails(
 
 class FetchEmailsInput(BaseModel):
     """
-    Input schema for the fetch_emails_tool.
+    Schema de entrada para a fetch_emails_tool.
     """
     email_address: str = Field(
-        description="Email address to fetch emails for"
+        description="Endereço de email para buscar emails"
     )
     minutes_since: int = Field(
         default=30,
-        description="Only retrieve emails newer than this many minutes"
+        description="Recuperar apenas emails mais novos que esta quantidade de minutos"
     )
 
 @tool(args_schema=FetchEmailsInput)
 def fetch_emails_tool(email_address: str, minutes_since: int = 30) -> str:
     """
-    Fetches recent emails from Gmail for the specified email address.
-    
+    Busca emails recentes do Gmail para o endereço de email especificado.
+
     Args:
-        email_address: Email address to fetch messages for
-        minutes_since: Only retrieve emails newer than this many minutes (default: 30)
-        
+        email_address: Endereço de email para buscar mensagens
+        minutes_since: Recuperar apenas emails mais novos que esta quantidade de minutos (padrão: 30)
+
     Returns:
-        String summary of fetched emails
+        Resumo string dos emails buscados
     """
     emails = list(fetch_group_emails(email_address, minutes_since))
     
     if not emails:
-        return "No new emails found."
+        return "Nenhum novo email encontrado."
     
-    result = f"Found {len(emails)} new emails:\n\n"
+    result = f"Encontrados {len(emails)} novos emails:\n\n"
     
     for i, email in enumerate(emails, 1):
         if email.get("user_respond", False):

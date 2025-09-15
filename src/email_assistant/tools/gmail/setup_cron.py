@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """
-Setup cron job for email ingestion in LangGraph.
+Configurar cron job para ingestão de email no LangGraph.
 
-This script creates a scheduled cron job in LangGraph that periodically
-runs the email ingestion graph to process new emails.
+Este script cria um cron job agendado no LangGraph que executa periodicamente
+o grafo de ingestão de email para processar novos emails.
 """
 
 import argparse
@@ -12,7 +12,7 @@ from typing import Optional
 from langgraph_sdk import get_client
 from dotenv import load_dotenv
 
-# Load environment variables
+# Carregar variáveis de ambiente
 load_dotenv()
 
 async def main(

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """
-Setup script for Gmail API integration.
+Script de configuração para integração da API Gmail.
 
-This script handles the OAuth flow for Gmail API access by:
-1. Creating a .secrets directory if it doesn't exist
-2. Using credentials from .secrets/secrets.json to authenticate
-3. Opening a browser window for user authentication
-4. Storing the access token in .secrets/token.json
+Este script gerencia o fluxo OAuth para acesso à API Gmail através de:
+1. Criação de um diretório .secrets se não existir
+2. Uso de credenciais do .secrets/secrets.json para autenticar
+3. Abertura de uma janela do navegador para autenticação do usuário
+4. Armazenamento do token de acesso em .secrets/token.json
 """
 
 import os
@@ -14,15 +14,15 @@ import sys
 import json
 from pathlib import Path
 
-# Add project root to sys.path for imports to work correctly
+# Adicionar raiz do projeto ao sys.path para imports funcionarem corretamente
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../")))
 
-# Import required Google libraries
+# Importar bibliotecas Google necessárias
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 
 def main():
-    """Run Gmail authentication setup."""
+    """Executar configuração de autenticação do Gmail."""
     # Create .secrets directory
     secrets_dir = Path(__file__).parent.absolute() / ".secrets"
     secrets_dir.mkdir(parents=True, exist_ok=True)

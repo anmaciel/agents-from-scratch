@@ -1,285 +1,285 @@
-# Gmail Integration Tools
+# Ferramentas de Integração Gmail
 
-Connect your email assistant to Gmail and Google Calendar APIs.
+Conecte seu assistente de email às APIs do Gmail e Google Calendar.
 
-## Graph
+## Grafo
 
-The `src/email_assistant/email_assistant_hitl_memory_gmail.py` graph is configured to use Gmail tools.
+O grafo `src/email_assistant/email_assistant_hitl_memory_gmail.py` está configurado para usar ferramentas Gmail.
 
-You simply need to run the setup below to obtain the credentials needed to run the graph with your own email.
+Você simplesmente precisa executar a configuração abaixo para obter as credenciais necessárias para executar o grafo com seu próprio email.
 
-## Setup Credentials
+## Configurar Credenciais
 
-### 1. Set up Google Cloud Project and Enable Required APIs
+### 1. Configurar Projeto Google Cloud e Habilitar APIs Necessárias
 
-#### Enable Gmail and Calendar APIs
+#### Habilitar APIs Gmail e Calendar
 
-1. Go to the [Google APIs Library and enable the Gmail API](https://developers.google.com/workspace/gmail/api/quickstart/python#enable_the_api)
-2. Go to the [Google APIs Library and enable the Google Calendar API](https://developers.google.com/workspace/calendar/api/quickstart/python#enable_the_api)
+1. Vá para a [Biblioteca de APIs Google e habilite a API Gmail](https://developers.google.com/workspace/gmail/api/quickstart/python#enable_the_api)
+2. Vá para a [Biblioteca de APIs Google e habilite a API Google Calendar](https://developers.google.com/workspace/calendar/api/quickstart/python#enable_the_api)
 
-#### Create OAuth Credentials
+#### Criar Credenciais OAuth
 
-1. [Authorize credentials for a desktop application](https://developers.google.com/workspace/gmail/api/quickstart/python#authorize_credentials_for_a_desktop_application)
-2. Go to Credentials → Create Credentials → OAuth Client ID
-3. Set Application Type to "Desktop app"
-4. Click "Create"
+1. [Autorizar credenciais para uma aplicação desktop](https://developers.google.com/workspace/gmail/api/quickstart/python#authorize_credentials_for_a_desktop_application)
+2. Vá para Credentials → Create Credentials → OAuth Client ID
+3. Defina Application Type como "Desktop app"
+4. Clique em "Create"
 
-> Note: If using a personal email (non-Google Workspace) select "External" under "Audience"
+> Nota: Se estiver usando um email pessoal (não Google Workspace) selecione "External" em "Audience"
 
 ![Screenshot 2025-04-26 at 7:43:57 AM](https://github.com/user-attachments/assets/718da39e-9b10-4a2a-905c-eda87c1c1126)
 
-> Then, add yourself as a test user
+> Em seguida, adicione-se como usuário de teste
 
-1. Save the downloaded JSON file (you'll need this in the next step)
+1. Salve o arquivo JSON baixado (você precisará dele no próximo passo)
 
-### 2. Set Up Authentication Files
+### 2. Configurar Arquivos de Autenticação
 
-1. Move your downloaded client secret JSON file to the `.secrets` directory
+1. Mova seu arquivo JSON de client secret baixado para o diretório `.secrets`
 
 ```bash
-# Create a secrets directory
+# Criar um diretório secrets
 mkdir -p src/email_assistant/tools/gmail/.secrets
 
-# Move your downloaded client secret to the secrets directory
+# Mover seu client secret baixado para o diretório secrets
 mv /path/to/downloaded/client_secret.json src/email_assistant/tools/gmail/.secrets/secrets.json
 ```
 
-1. Run the Gmail setup script
+1. Execute o script de configuração do Gmail
 
 ```bash
-# Run the Gmail setup script
+# Executar o script de configuração do Gmail
 python src/email_assistant/tools/gmail/setup_gmail.py
 ```
 
-- This will open a browser window for you to authenticate with your Google account
-- This will create a `token.json` file in the `.secrets` directory
-- This token will be used for Gmail API access
+- Isso abrirá uma janela do navegador para você autenticar com sua conta Google
+- Isso criará um arquivo `token.json` no diretório `.secrets`
+- Este token será usado para acesso à API Gmail
 
-## Use With A Local Deployment
+## Usar com Implantação Local
 
-### 1. Run the Gmail Ingestion Script with Locally Running LangGraph Server
+### 1. Executar o Script de Ingestão Gmail com Servidor LangGraph Local
 
-1. Once you have authentication set up, run LangGraph server locally:
+1. Uma vez que você tenha a autenticação configurada, execute o servidor LangGraph localmente:
 
 ```txt
 langgraph dev
 ```
 
-1. Run the ingestion script in another terminal with desired parameters:
+1. Execute o script de ingestão em outro terminal com os parâmetros desejados:
 
 ```bash
 python src/email_assistant/tools/gmail/run_ingest.py --email lance@langgraph.dev --minutes-since 1000
 ```
 
-- By default, this will use the local deployment URL (<http://127.0.0.1:2024>) and fetch emails from the past 1000 minutes.
-- It will use the LangGraph SDK to pass each email to the locally running email assistant.
-- It will use the `email_assistant_hitl_memory_gmail` graph, which is configured to use Gmail tools.
+- Por padrão, isso usará a URL de implantação local (<http://127.0.0.1:2024>) e buscará emails dos últimos 1000 minutos.
+- Usará o LangGraph SDK para passar cada email para o assistente de email executando localmente.
+- Usará o grafo `email_assistant_hitl_memory_gmail`, que está configurado para usar ferramentas Gmail.
 
-#### Parameters
+#### Parâmetros
 
-- `--graph-name`: Name of the LangGraph to use (default: "email_assistant_hitl_memory_gmail")
-- `--email`: The email address to fetch messages from (alternative to setting EMAIL_ADDRESS)
-- `--minutes-since`: Only process emails that are newer than this many minutes (default: 60)
-- `--url`: URL of the LangGraph deployment (default: <http://127.0.0.1:2024>)
-- `--rerun`: Process emails that have already been processed (default: false)
-- `--early`: Stop after processing one email (default: false)
-- `--include-read`: Include emails that have already been read (by default only unread emails are processed)
-- `--skip-filters`: Process all emails without filtering (by default only latest messages in threads where you're not the sender are processed)
+- `--graph-name`: Nome do LangGraph a usar (padrão: "email_assistant_hitl_memory_gmail")
+- `--email`: O endereço de email para buscar mensagens (alternativa para definir EMAIL_ADDRESS)
+- `--minutes-since`: Processar apenas emails mais novos que esta quantidade de minutos (padrão: 60)
+- `--url`: URL da implantação LangGraph (padrão: <http://127.0.0.1:2024>)
+- `--rerun`: Processar emails que já foram processados (padrão: false)
+- `--early`: Parar após processar um email (padrão: false)
+- `--include-read`: Incluir emails que já foram lidos (por padrão apenas emails não lidos são processados)
+- `--skip-filters`: Processar todos os emails sem filtrar (por padrão apenas as mensagens mais recentes em threads onde você não é o remetente são processadas)
 
-#### Troubleshooting
+#### Solução de Problemas
 
-- **Missing emails?** The Gmail API applies filters to show only important/primary emails by default. You can:
-  - Increase the `--minutes-since` parameter to a larger value (e.g., 1000) to fetch emails from a longer time period
-  - Use the `--include-read` flag to process emails marked as "read" (by default only unread emails are processed)
-  - Use the `--skip-filters` flag to include all messages (not just the latest in a thread, and including ones you sent)
-  - Try running with all options to process everything: `--include-read --skip-filters --minutes-since 1000`
-  - Use the `--mock` flag to test the system with simulated emails
+- **Emails ausentes?** A API Gmail aplica filtros para mostrar apenas emails importantes/primários por padrão. Você pode:
+  - Aumentar o parâmetro `--minutes-since` para um valor maior (ex: 1000) para buscar emails de um período mais longo
+  - Usar a flag `--include-read` para processar emails marcados como "lidos" (por padrão apenas emails não lidos são processados)
+  - Usar a flag `--skip-filters` para incluir todas as mensagens (não apenas a mais recente em uma thread, incluindo as que você enviou)
+  - Tentar executar com todas as opções para processar tudo: `--include-read --skip-filters --minutes-since 1000`
+  - Usar a flag `--mock` para testar o sistema com emails simulados
 
-### 2. Connect to Agent Inbox
+### 2. Conectar ao Agent Inbox
 
-After ingestion, you can access your all interrupted threads in Agent Inbox (<https://dev.agentinbox.ai/>):
+Após a ingestão, você pode acessar todas as suas threads interrompidas no Agent Inbox (<https://dev.agentinbox.ai/>):
 
-- Deployment URL: <http://127.0.0.1:2024>
-- Assistant/Graph ID: `email_assistant_hitl_memory_gmail`
-- Name: `Graph Name`
+- URL de Implantação: <http://127.0.0.1:2024>
+- ID do Assistente/Grafo: `email_assistant_hitl_memory_gmail`
+- Nome: `Graph Name`
 
-## Run A Hosted Deployment
+## Executar uma Implantação Hospedada
 
-### 1. Deploy to LangGraph Platform
+### 1. Implantar na Plataforma LangGraph
 
-1. Navigate to the deployments page in LangSmith
-2. Click New Deployment
-3. Connect it to your fork of the [this repo](https://github.com/langchain-ai/agents-from-scratch) and desired branch
-4. Give it a name like `Yourname-Email-Assistant`
-5. Add the following environment variables:
+1. Navegue para a página de implantações no LangSmith
+2. Clique em New Deployment
+3. Conecte-o ao seu fork do [este repositório](https://github.com/langchain-ai/agents-from-scratch) e branch desejado
+4. Dê um nome como `Yourname-Email-Assistant`
+5. Adicione as seguintes variáveis de ambiente:
    - `GOOGLE_API_KEY`
-   - `GMAIL_SECRET` - This is the full dictionary in `.secrets/secrets.json`
-   - `GMAIL_TOKEN` - This is the full dictionary in `.secrets/token.json`
-6. Click Submit
-7. Get the `API URL` (<https://your-email-assistant-xxx.us.langgraph.app>) from the deployment page
+   - `GMAIL_SECRET` - Este é o dicionário completo em `.secrets/secrets.json`
+   - `GMAIL_TOKEN` - Este é o dicionário completo em `.secrets/token.json`
+6. Clique em Submit
+7. Obtenha a `API URL` (<https://your-email-assistant-xxx.us.langgraph.app>) da página de implantação
 
-### 2. Run Ingestion with Hosted Deployment
+### 2. Executar Ingestão com Implantação Hospedada
 
-Once your LangGraph deployment is up and running, you can test the email ingestion with:
+Uma vez que sua implantação LangGraph esteja funcionando, você pode testar a ingestão de email com:
 
 ```bash
 python src/email_assistant/tools/gmail/run_ingest.py --email lance@langchain.dev --minutes-since 2440 --include-read --url https://your-email-assistant-xxx.us.langgraph.app
 ```
 
-### 3. Connect to Agent Inbox
+### 3. Conectar ao Agent Inbox
 
-After ingestion, you can access your all interrupted threads in Agent Inbox (<https://dev.agentinbox.ai/>):
+Após a ingestão, você pode acessar todas as suas threads interrompidas no Agent Inbox (<https://dev.agentinbox.ai/>):
 
-- Deployment URL: <https://your-email-assistant-xxx.us.langgraph.app>
-- Assistant/Graph ID: `email_assistant_hitl_memory_gmail`
-- Name: `Graph Name`
-- LangSmith API Key: `LANGSMITH_API_KEY`
+- URL de Implantação: <https://your-email-assistant-xxx.us.langgraph.app>
+- ID do Assistente/Grafo: `email_assistant_hitl_memory_gmail`
+- Nome: `Graph Name`
+- Chave API LangSmith: `LANGSMITH_API_KEY`
 
-### 4. Set up Cron Job
+### 4. Configurar Cron Job
 
-With a hosted deployment, you can set up a cron job to run the ingestion script at a specified interval.
+Com uma implantação hospedada, você pode configurar um cron job para executar o script de ingestão em um intervalo especificado.
 
-To automate email ingestion, set up a scheduled cron job using the included setup script:
+Para automatizar a ingestão de email, configure um cron job agendado usando o script de configuração incluído:
 
 ```bash
 python src/email_assistant/tools/gmail/setup_cron.py --email lance@langchain.dev --url https://lance-email-assistant-4681ae9646335abe9f39acebbde8680b.us.langgraph.app
 ```
 
-#### Parameters
+#### Parâmetros
 
-- `--email`: Email address to fetch messages for (required)
-- `--url`: LangGraph deployment URL (required)
-- `--minutes-since`: Only fetch emails newer than this many minutes (default: 60)
-- `--schedule`: Cron schedule expression (default: "*/10* ** *" = every 10 minutes)
-- `--graph-name`: Name of the graph to use (default: "email_assistant_hitl_memory_gmail")
-- `--include-read`: Include emails marked as read (by default only unread emails are processed) (default: false)
+- `--email`: Endereço de email para buscar mensagens (obrigatório)
+- `--url`: URL de implantação LangGraph (obrigatório)
+- `--minutes-since`: Buscar apenas emails mais novos que esta quantidade de minutos (padrão: 60)
+- `--schedule`: Expressão de agendamento cron (padrão: "*/10* ** *" = a cada 10 minutos)
+- `--graph-name`: Nome do grafo a usar (padrão: "email_assistant_hitl_memory_gmail")
+- `--include-read`: Incluir emails marcados como lidos (por padrão apenas emails não lidos são processados) (padrão: false)
 
-#### How the Cron Works
+#### Como o Cron Funciona
 
-The cron consists of two main components:
+O cron consiste em dois componentes principais:
 
-1. **`src/email_assistant/cron.py`**: Defines a simple LangGraph graph that:
-   - Calls the same `fetch_and_process_emails` function used by `run_ingest.py`
-   - Wraps this in a simple graph so that it can be run as a hosted cron using LangGraph Platform
+1. **`src/email_assistant/cron.py`**: Define um grafo LangGraph simples que:
+   - Chama a mesma função `fetch_and_process_emails` usada por `run_ingest.py`
+   - Envolve isso em um grafo simples para que possa ser executado como um cron hospedado usando a Plataforma LangGraph
 
-2. **`src/email_assistant/tools/gmail/setup_cron.py`**: Creates the scheduled cron job:
-   - Uses LangGraph SDK `client.crons.create` to create a cron job for the hosted `cron.py` graph
+2. **`src/email_assistant/tools/gmail/setup_cron.py`**: Cria o cron job agendado:
+   - Usa o LangGraph SDK `client.crons.create` para criar um cron job para o grafo `cron.py` hospedado
 
-#### Managing Cron Jobs
+#### Gerenciando Cron Jobs
 
-To view, update, or delete existing cron jobs, you can use the LangGraph SDK:
+Para visualizar, atualizar ou deletar cron jobs existentes, você pode usar o LangGraph SDK:
 
 ```python
 from langgraph_sdk import get_client
 
-# Connect to deployment
+# Conectar à implantação
 client = get_client(url="https://your-deployment-url.us.langgraph.app")
 
-# List all cron jobs
+# Listar todos os cron jobs
 cron_jobs = await client.crons.list()
 print(cron_jobs)
 
-# Delete a cron job
+# Deletar um cron job
 await client.crons.delete(cron_job_id)
 ```
 
-## How Gmail Ingestion Works
+## Como a Ingestão Gmail Funciona
 
-The Gmail ingestion process works in three main stages:
+O processo de ingestão Gmail funciona em três estágios principais:
 
-### 1. CLI Parameters → Gmail Search Query
+### 1. Parâmetros CLI → Consulta de Busca Gmail
 
-CLI parameters are translated into a Gmail search query:
+Parâmetros CLI são traduzidos em uma consulta de busca Gmail:
 
-- `--minutes-since 1440` → `after:TIMESTAMP` (emails from the last 24 hours)
-- `--email you@example.com` → `to:you@example.com OR from:you@example.com` (emails where you're sender or recipient)
-- `--include-read` → removes `is:unread` filter (includes read messages)
+- `--minutes-since 1440` → `after:TIMESTAMP` (emails das últimas 24 horas)
+- `--email you@example.com` → `to:you@example.com OR from:you@example.com` (emails onde você é remetente ou destinatário)
+- `--include-read` → remove filtro `is:unread` (inclui mensagens lidas)
 
-For example, running:
+Por exemplo, executando:
 
 ```txt
 python run_ingest.py --email you@example.com --minutes-since 1440 --include-read
 ```
 
-Creates a Gmail API search query like:
+Cria uma consulta de busca da API Gmail como:
 
 ```txt
 (to:you@example.com OR from:you@example.com) after:1745432245
 ```
 
-### 2. Search Results → Thread Processing
+### 2. Resultados da Busca → Processamento de Thread
 
-For each message returned by the search:
+Para cada mensagem retornada pela busca:
 
-1. The script obtains the thread ID
-2. Using this thread ID, it fetches the **complete thread** with all messages
-3. Messages in the thread are sorted by date to identify the latest message
-4. Depending on filtering options, it processes either:
-   - The specific message found in the search (default behavior)
-   - The latest message in the thread (when using `--skip-filters`)
+1. O script obtém o ID da thread
+2. Usando este ID da thread, busca a **thread completa** com todas as mensagens
+3. Mensagens na thread são ordenadas por data para identificar a mensagem mais recente
+4. Dependendo das opções de filtragem, processa:
+   - A mensagem específica encontrada na busca (comportamento padrão)
+   - A mensagem mais recente na thread (ao usar `--skip-filters`)
 
-### 3. Default Filters and `--skip-filters` Behavior
+### 3. Filtros Padrão e Comportamento `--skip-filters`
 
-#### Default Filters Applied
+#### Filtros Padrão Aplicados
 
-Without `--skip-filters`, the system applies these three filters in sequence:
+Sem `--skip-filters`, o sistema aplica estes três filtros em sequência:
 
-1. **Unread Filter** (controlled by `--include-read`):
-   - Default behavior: Only processes unread messages
-   - With `--include-read`: Processes both read and unread messages
-   - Implementation: Adds `is:unread` to the Gmail search query
-   - This filter happens at the search level before any messages are retrieved
+1. **Filtro Não Lido** (controlado por `--include-read`):
+   - Comportamento padrão: Processa apenas mensagens não lidas
+   - Com `--include-read`: Processa mensagens lidas e não lidas
+   - Implementação: Adiciona `is:unread` à consulta de busca Gmail
+   - Este filtro acontece no nível de busca antes de qualquer mensagem ser recuperada
 
-2. **Sender Filter**:
-   - Default behavior: Skips messages sent by your own email address
-   - Implementation: Checks if your email appears in the "From" header
-   - Logic: `is_from_user = email_address in from_header`
-   - This prevents the assistant from responding to your own emails
+2. **Filtro de Remetente**:
+   - Comportamento padrão: Pula mensagens enviadas pelo seu próprio endereço de email
+   - Implementação: Verifica se seu email aparece no cabeçalho "From"
+   - Lógica: `is_from_user = email_address in from_header`
+   - Isso impede que o assistente responda aos seus próprios emails
 
-3. **Thread-Position Filter**:
-   - Default behavior: Only processes the most recent message in each thread
-   - Implementation: Compares message ID with the last message in thread
-   - Logic: `is_latest_in_thread = message["id"] == last_message["id"]`
-   - Prevents processing older messages when a newer reply exists
+3. **Filtro de Posição da Thread**:
+   - Comportamento padrão: Processa apenas a mensagem mais recente em cada thread
+   - Implementação: Compara ID da mensagem com a última mensagem na thread
+   - Lógica: `is_latest_in_thread = message["id"] == last_message["id"]`
+   - Impede processamento de mensagens antigas quando uma resposta mais nova existe
 
-The combination of these filters means only the latest message in each thread that was not sent by you and is unread (unless `--include-read` is specified) will be processed.
+A combinação destes filtros significa que apenas a mensagem mais recente em cada thread que não foi enviada por você e não foi lida (a menos que `--include-read` seja especificado) será processada.
 
-#### Effect of `--skip-filters` Flag
+#### Efeito da Flag `--skip-filters`
 
-When `--skip-filters` is enabled:
+Quando `--skip-filters` está habilitado:
 
-1. **Bypasses Sender and Thread-Position Filters**:
-   - Messages sent by you will be processed
-   - Messages that aren't the latest in thread will be processed
-   - Logic: `should_process = skip_filters or (not is_from_user and is_latest_in_thread)`
+1. **Ignora Filtros de Remetente e Posição da Thread**:
+   - Mensagens enviadas por você serão processadas
+   - Mensagens que não são as mais recentes na thread serão processadas
+   - Lógica: `should_process = skip_filters or (not is_from_user and is_latest_in_thread)`
 
-2. **Changes Which Message Is Processed**:
-   - Without `--skip-filters`: Uses the specific message found by search
-   - With `--skip-filters`: Always uses the latest message in the thread
-   - Even if the latest message wasn't found in the search results
+2. **Muda Qual Mensagem É Processada**:
+   - Sem `--skip-filters`: Usa a mensagem específica encontrada pela busca
+   - Com `--skip-filters`: Sempre usa a mensagem mais recente na thread
+   - Mesmo se a mensagem mais recente não foi encontrada nos resultados da busca
 
-3. **Unread Filter Still Applies (unless overridden)**:
-   - `--skip-filters` does NOT bypass the unread filter
-   - To process read messages, you must still use `--include-read`
-   - This is because the unread filter happens at the search level
+3. **Filtro Não Lido Ainda Se Aplica (a menos que sobrescrito)**:
+   - `--skip-filters` NÃO ignora o filtro de não lidos
+   - Para processar mensagens lidas, você ainda deve usar `--include-read`
+   - Isso é porque o filtro de não lidos acontece no nível de busca
 
-In summary:
+Em resumo:
 
-- Default: Process only unread messages where you're not the sender and that are the latest in their thread
-- `--skip-filters`: Process all messages found by search, using the latest message in each thread
-- `--include-read`: Include read messages in the search
-- `--include-read --skip-filters`: Most comprehensive, processes the latest message in all threads found by search
+- Padrão: Processar apenas mensagens não lidas onde você não é o remetente e que são as mais recentes em sua thread
+- `--skip-filters`: Processar todas as mensagens encontradas pela busca, usando a mensagem mais recente em cada thread
+- `--include-read`: Incluir mensagens lidas na busca
+- `--include-read --skip-filters`: Mais abrangente, processa a mensagem mais recente em todas as threads encontradas pela busca
 
-## Important Gmail API Limitations
+## Limitações Importantes da API Gmail
 
-The Gmail API has several limitations that affect email ingestion:
+A API Gmail tem várias limitações que afetam a ingestão de email:
 
-1. **Search-Based API**: Gmail doesn't provide a direct "get all emails from timeframe" endpoint
-   - All email retrieval relies on Gmail's search functionality
-   - Search results can be delayed for very recent messages (indexing lag)
-   - Search results might not include all messages that technically match criteria
+1. **API Baseada em Busca**: Gmail não fornece um endpoint direto "obter todos os emails do período"
+   - Toda recuperação de email depende da funcionalidade de busca do Gmail
+   - Resultados de busca podem ter atraso para mensagens muito recentes (atraso de indexação)
+   - Resultados de busca podem não incluir todas as mensagens que tecnicamente atendem aos critérios
 
-2. **Two-Stage Retrieval Process**:
-   - Initial search to find relevant message IDs
-   - Secondary thread retrieval to get complete conversations
-   - This two-stage process is necessary because search doesn't guarantee complete thread information
+2. **Processo de Recuperação em Duas Etapas**:
+   - Busca inicial para encontrar IDs de mensagem relevantes
+   - Recuperação secundária de thread para obter conversas completas
+   - Este processo de duas etapas é necessário porque a busca não garante informações completas da thread

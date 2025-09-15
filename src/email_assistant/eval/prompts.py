@@ -1,21 +1,21 @@
-# Used in /eval/evaluate_triage.py
+# Usado em /eval/evaluate_triage.py
 TRIAGE_CLASSIFICATION_PROMPT = """
 
-<Task>
-You are evaluating the classification of emails.
+<Tarefa>
+Você está avaliando a classificação de emails.
 
-They should be be classified into one of the following categories:
+Eles devem ser classificados em uma das seguintes categorias:
 - ignore
 - notify
 - respond
 
-You will be given:
-- the email_input
-- the agent's reasoning and decision as a list of messages 
-- the correct classification
+Você receberá:
+- o email_input
+- o raciocínio e decisão do agente como uma lista de mensagens
+- a classificação correta
 
-Your job is to evaluate the agent's reasoning and decision relative to the correct classification.
-</Task>
+Seu trabalho é avaliar o raciocínio e decisão do agente relativo à classificação correta.
+</Tarefa>
 
 <email_input>
 {inputs}
@@ -30,35 +30,35 @@ Your job is to evaluate the agent's reasoning and decision relative to the corre
 </correct_classification>
 """
 
-# Used in /tests/test_email_assistant.py
-RESPONSE_CRITERIA_SYSTEM_PROMPT = """You are evaluating an email assistant that works on behalf of a user.
+# Usado em /tests/test_email_assistant.py
+RESPONSE_CRITERIA_SYSTEM_PROMPT = """Você está avaliando um assistente de email que trabalha em nome de um usuário.
 
-You will see a sequence of messages, starting with an email sent to the user. 
+Você verá uma sequência de mensagens, começando com um email enviado ao usuário.
 
-You will then see the assistant's response to this email on behalf of the user, which includes any tool calls made (e.g., write_email, schedule_meeting, check_calendar_availability, done).
+Você então verá a resposta do assistente a este email em nome do usuário, que inclui quaisquer chamadas de ferramenta feitas (por exemplo, write_email, schedule_meeting, check_calendar_availability, done).
 
-You will also see a list of criteria that the assistant's response must meet.
+Você também verá uma lista de critérios que a resposta do assistente deve atender.
 
-Your job is to evaluate if the assistant's response meets ALL the criteria bullet points provided.
+Seu trabalho é avaliar se a resposta do assistente atende TODOS os pontos de critério fornecidos.
 
-IMPORTANT EVALUATION INSTRUCTIONS:
-1. The assistant's response is formatted as a list of messages.
-2. The response criteria are formatted as bullet points (•)
-3. You must evaluate the response against EACH bullet point individually
-4. ALL bullet points must be met for the response to receive a 'True' grade
-5. For each bullet point, cite specific text from the response that satisfies or fails to satisfy it
-6. Be objective and rigorous in your evaluation
-7. In your justification, clearly indicate which criteria were met and which were not
-7. If ANY criteria are not met, the overall grade must be 'False'
+INSTRUÇÕES IMPORTANTES DE AVALIAÇÃO:
+1. A resposta do assistente é formatada como uma lista de mensagens.
+2. Os critérios de resposta são formatados como pontos (•)
+3. Você deve avaliar a resposta contra CADA ponto individualmente
+4. TODOS os pontos devem ser atendidos para que a resposta receba uma nota 'True'
+5. Para cada ponto, cite texto específico da resposta que satisfaz ou falha em satisfazê-lo
+6. Seja objetivo e rigoroso em sua avaliação
+7. Em sua justificativa, indique claramente quais critérios foram atendidos e quais não foram
+7. Se QUALQUER critério não for atendido, a nota geral deve ser 'False'
 
-Your output will be used for automated testing, so maintain a consistent evaluation approach."""
+Sua saída será usada para testes automatizados, então mantenha uma abordagem de avaliação consistente."""
 
-# Used in /tests/test_hitl.py
-HITL_FEEDBACK_SYSTEM_PROMPT = """You are evaluating an email assistant's response to determine if it meets specific criteria.
+# Usado em /tests/test_hitl.py
+HITL_FEEDBACK_SYSTEM_PROMPT = """Você está avaliando a resposta de um assistente de email para determinar se atende critérios específicos.
 
-This is an email assistant that is used to respond to emails. Review our initial email response and the user feedback given to update the email response. Here is the feedback: {feedback}. Assess whether the final email response addresses the feedback that we gave."""
+Este é um assistente de email usado para responder a emails. Revise nossa resposta inicial de email e o feedback do usuário dado para atualizar a resposta do email. Aqui está o feedback: {feedback}. Avalie se a resposta final do email aborda o feedback que fornecemos."""
 
-# Used in /tests/test_memory.py
-MEMORY_UPDATE_SYSTEM_PROMPT = """This is an email assistant that uses memory to update its response preferences. 
+# Usado em /tests/test_memory.py
+MEMORY_UPDATE_SYSTEM_PROMPT = """Este é um assistente de email que usa memória para atualizar suas preferências de resposta.
 
-Review the initial response preferences and the updated response preferences. Assess whether the updated response preferences are more accurate than the initial response preferences."""
+Revise as preferências de resposta iniciais e as preferências de resposta atualizadas. Avalie se as preferências de resposta atualizadas são mais precisas que as preferências de resposta iniciais."""

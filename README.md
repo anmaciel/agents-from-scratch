@@ -124,9 +124,9 @@ Este notebook mostra como adicionar human-in-the-loop (HITL), permitindo ao usu�
 
 Este notebook mostra como adicionar memória ao assistente de email, permitindo que aprenda com feedback do usuário e adapte-se às preferências ao longo do tempo. O assistente com memória habilitada ([email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py)) usa o [LangGraph Store](https://langchain-ai.github.io/langgraph/concepts/memory/#long-term-memory) para persistir memórias. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py).
 
-## Connecting to APIs
+## Conectando a APIs
 
-The above notebooks using mock email and calendar tools.
+Os notebooks acima usam ferramentas mock de email e calendário.
 
 ### Gmail Integration and Deployment
 

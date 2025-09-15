@@ -19,8 +19,8 @@ class JobKickoff:
     skip_filters: bool = False
 
 async def main(state: JobKickoff):
-    """Run the email ingestion process"""
-    print(f"Kicking off job to fetch emails from the past {state.minutes_since} minutes")
+    """Executar o processo de ingestão de email"""
+    print(f"Iniciando job para buscar emails dos últimos {state.minutes_since} minutos")
     print(f"Email: {state.email}")
     print(f"URL: {state.url}")
     print(f"Graph name: {state.graph_name}")
@@ -31,7 +31,7 @@ async def main(state: JobKickoff):
             def __init__(self, **kwargs):
                 for key, value in kwargs.items():
                     setattr(self, key, value)
-                print(f"Created Args with attributes: {dir(self)}")
+                print(f"Args criado com atributos: {dir(self)}")
         
         args = Args(
             email=state.email,
@@ -44,9 +44,9 @@ async def main(state: JobKickoff):
             skip_filters=state.skip_filters
         )
         
-        # Print email and URL to verify they're being passed correctly
-        print(f"Args email: {args.email}")
-        print(f"Args url: {args.url}")
+        # Imprimir email e URL para verificar se estão sendo passados corretamente
+        print(f"Email dos Args: {args.email}")
+        print(f"URL dos Args: {args.url}")
         
         # Run the ingestion process
         print("Starting fetch_and_process_emails...")

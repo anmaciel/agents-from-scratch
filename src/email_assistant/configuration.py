@@ -1,4 +1,4 @@
-"""Define the configurable parameters for the agent."""
+"""Definir os parâmetros configuráveis para o agente."""
 
 import os
 from dataclasses import dataclass, fields
@@ -8,13 +8,13 @@ from langchain_core.runnables import RunnableConfig
 
 @dataclass(kw_only=True)
 class Configuration:
-    """Placeholder for configuration."""
+    """Placeholder para configuração."""
 
     @classmethod
     def from_runnable_config(
         cls, config: Optional[RunnableConfig] = None
     ) -> "Configuration":
-        """Create a Configuration instance from a RunnableConfig."""
+        """Criar uma instância Configuration de um RunnableConfig."""
         configurable = (
             config["configurable"] if config and "configurable" in config else {}
         )

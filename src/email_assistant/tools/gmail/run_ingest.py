@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 """
-Simple Gmail ingestion script based directly on test.ipynb that works with LangSmith tracing.
+Script simples de ingestão do Gmail baseado diretamente em test.ipynb que funciona com rastreamento LangSmith.
 
-This script provides a minimal implementation for ingesting emails to the LangGraph server,
-with reliable LangSmith tracing.
+Este script fornece uma implementação mínima para ingerir emails no servidor LangGraph,
+com rastreamento LangSmith confiável.
 """
 
 import base64
@@ -22,30 +22,30 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Setup paths
+# Configurar caminhos
 _ROOT = Path(__file__).parent.absolute()
 _SECRETS_DIR = _ROOT / ".secrets"
 TOKEN_PATH = _SECRETS_DIR / "token.json"
 
 def extract_message_part(payload):
-    """Extract content from a message part."""
-    # If this is multipart, process with preference for text/plain
+    """Extrair conteúdo de uma parte da mensagem."""
+    # Se for multipart, processar com preferência para text/plain
     if payload.get("parts"):
-        # First try to find text/plain part
+        # Primeiro tentar encontrar parte text/plain
         for part in payload["parts"]:
             mime_type = part.get("mimeType", "")
             if mime_type == "text/plain" and part.get("body", {}).get("data"):
                 data = part["body"]["data"]
                 return base64.urlsafe_b64decode(data).decode("utf-8")
                 
-        # If no text/plain found, try text/html
+        # Se não encontrar text/plain, tentar text/html
         for part in payload["parts"]:
             mime_type = part.get("mimeType", "")
             if mime_type == "text/html" and part.get("body", {}).get("data"):
                 data = part["body"]["data"]
                 return base64.urlsafe_b64decode(data).decode("utf-8")
                 
-        # If we still haven't found content, recursively check for nested parts
+        # Se ainda não encontramos conteúdo, verificar recursivamente partes aninhadas
         for part in payload["parts"]:
             content = extract_message_part(part)
             if content:
@@ -60,14 +60,14 @@ def extract_message_part(payload):
 
 def load_gmail_credentials():
     """
-    Load Gmail credentials from token.json or environment variables.
-    
-    This function attempts to load credentials from multiple sources in this order:
-    1. Environment variables GMAIL_TOKEN
-    2. Local file at token_path (.secrets/token.json)
-    
+    Carregar credenciais do Gmail do token.json ou variáveis de ambiente.
+
+    Esta função tenta carregar credenciais de múltiplas fontes nesta ordem:
+    1. Variáveis de ambiente GMAIL_TOKEN
+    2. Arquivo local em token_path (.secrets/token.json)
+
     Returns:
-        Google OAuth2 Credentials object or None if credentials can't be loaded
+        Objeto Google OAuth2 Credentials ou None se as credenciais não puderem ser carregadas
     """
     token_data = None
     
