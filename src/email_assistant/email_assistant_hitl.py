@@ -24,7 +24,7 @@ llm_router = llm.with_structured_output(RouterSchema)
 
 # Initialize the LLM, enforcing tool use (of any available tools) for agent
 llm = init_chat_model("gemini-2.5-flash", model_provider="google-genai", temperature=0.0)
-llm_with_tools = llm.bind_tools(tools, tool_choice="required")
+llm_with_tools = llm.bind_tools(tools, tool_choice="any")
 
 # Nodes 
 def triage_router(state: State) -> Command[Literal["triage_interrupt_handler", "response_agent", "__end__"]]:
@@ -95,7 +95,7 @@ def triage_router(state: State) -> Command[Literal["triage_interrupt_handler", "
         }
 
     else:
-        raise ValueError(f"Invalid classification: {classification}")
+        raise ValueError(f"Classificação inválida: {classification}")
     return Command(goto=goto, update=update)
 
 def triage_interrupt_handler(state: State) -> Command[Literal["response_agent", "__end__"]]:
@@ -109,7 +109,7 @@ def triage_interrupt_handler(state: State) -> Command[Literal["response_agent", 
 
     # Create messages
     messages = [{"role": "user",
-                "content": f"Email to notify user about: {email_markdown}"
+                "content": f"Email para notificar usuário sobre: {email_markdown}"
                 }]
 
     # Create interrupt for Agent Inbox
@@ -124,7 +124,7 @@ def triage_interrupt_handler(state: State) -> Command[Literal["response_agent", 
             "allow_edit": False, 
             "allow_accept": False,  
         },
-        # Email to show in Agent Inbox
+        # Email para mostrar no Agent Inbox
         "description": email_markdown,
     }
 
@@ -137,7 +137,7 @@ def triage_interrupt_handler(state: State) -> Command[Literal["response_agent", 
         user_input = response["args"]
         # Used by the response agent
         messages.append({"role": "user",
-                        "content": f"User wants to reply to the email. Use this feedback to respond: {user_input}"
+                        "content": f"Usuário quer responder ao email. Use este feedback para responder: {user_input}"
                         })
         # Go to response agent
         goto = "response_agent"
@@ -148,7 +148,7 @@ def triage_interrupt_handler(state: State) -> Command[Literal["response_agent", 
 
     # Catch all other responses
     else:
-        raise ValueError(f"Invalid response: {response}")
+        raise ValueError(f"Resposta inválida: {response}")
 
     # Update the state 
     update = {
@@ -232,7 +232,7 @@ def interrupt_handler(state: State) -> Command[Literal["llm_call", "__end__"]]:
                 "allow_accept": False,
             }
         else:
-            raise ValueError(f"Invalid tool call: {tool_call['name']}")
+            raise ValueError(f"Chamada de ferramenta inválida: {tool_call['name']}")
 
         # Create the interrupt request
         request = {
@@ -298,45 +298,45 @@ def interrupt_handler(state: State) -> Command[Literal["llm_call", "__end__"]]:
             
             # Catch all other tool calls
             else:
-                raise ValueError(f"Invalid tool call: {tool_call['name']}")
+                raise ValueError(f"Chamada de ferramenta inválida: {tool_call['name']}")
 
         elif response["type"] == "ignore":
             if tool_call["name"] == "write_email":
                 # Don't execute the tool, and tell the agent how to proceed
-                result.append({"role": "tool", "content": "User ignored this email draft. Ignore this email and end the workflow.", "tool_call_id": tool_call["id"]})
+                result.append({"role": "tool", "content": "Usuário ignorou este rascunho de email. Ignore este email e encerre o fluxo de trabalho.", "tool_call_id": tool_call["id"]})
                 # Go to END
                 goto = END
             elif tool_call["name"] == "schedule_meeting":
                 # Don't execute the tool, and tell the agent how to proceed
-                result.append({"role": "tool", "content": "User ignored this calendar meeting draft. Ignore this email and end the workflow.", "tool_call_id": tool_call["id"]})
+                result.append({"role": "tool", "content": "Usuário ignorou este rascunho de reunião. Ignore este email e encerre o fluxo de trabalho.", "tool_call_id": tool_call["id"]})
                 # Go to END
                 goto = END
             elif tool_call["name"] == "Question":
                 # Don't execute the tool, and tell the agent how to proceed
-                result.append({"role": "tool", "content": "User ignored this question. Ignore this email and end the workflow.", "tool_call_id": tool_call["id"]})
+                result.append({"role": "tool", "content": "Usuário ignorou esta pergunta. Ignore este email e encerre o fluxo de trabalho.", "tool_call_id": tool_call["id"]})
                 # Go to END
                 goto = END
             else:
-                raise ValueError(f"Invalid tool call: {tool_call['name']}")
+                raise ValueError(f"Chamada de ferramenta inválida: {tool_call['name']}")
             
         elif response["type"] == "response":
             # User provided feedback
             user_feedback = response["args"]
             if tool_call["name"] == "write_email":
                 # Don't execute the tool, and add a message with the user feedback to incorporate into the email
-                result.append({"role": "tool", "content": f"User gave feedback, which can we incorporate into the email. Feedback: {user_feedback}", "tool_call_id": tool_call["id"]})
+                result.append({"role": "tool", "content": f"Usuário deu feedback, que podemos incorporar no email. Feedback: {user_feedback}", "tool_call_id": tool_call["id"]})
             elif tool_call["name"] == "schedule_meeting":
                 # Don't execute the tool, and add a message with the user feedback to incorporate into the email
-                result.append({"role": "tool", "content": f"User gave feedback, which can we incorporate into the meeting request. Feedback: {user_feedback}", "tool_call_id": tool_call["id"]})
+                result.append({"role": "tool", "content": f"Usuário deu feedback, que podemos incorporar na solicitação de reunião. Feedback: {user_feedback}", "tool_call_id": tool_call["id"]})
             elif tool_call["name"] == "Question":
                 # Don't execute the tool, and add a message with the user feedback to incorporate into the email
                 result.append({"role": "tool", "content": f"User answered the question, which can we can use for any follow up actions. Feedback: {user_feedback}", "tool_call_id": tool_call["id"]})
             else:
-                raise ValueError(f"Invalid tool call: {tool_call['name']}")
+                raise ValueError(f"Chamada de ferramenta inválida: {tool_call['name']}")
 
         # Catch all other responses
         else:
-            raise ValueError(f"Invalid response: {response}")
+            raise ValueError(f"Resposta inválida: {response}")
             
     # Update the state 
     update = {

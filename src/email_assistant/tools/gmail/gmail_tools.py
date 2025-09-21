@@ -27,13 +27,13 @@ _SECRETS_DIR = _ROOT / ".secrets"
 # Se não estiverem disponíveis, usaremos uma implementação mock
 try:
     import logging
-    from googleapiclient.discovery import build
+    from googleapiclient.discovery import build  # type: ignore
     from email.mime.text import MIMEText
     from datetime import timedelta
     from dateutil.parser import parse as parse_time
-    from google.oauth2.credentials import Credentials
-    from google_auth_oauthlib.flow import InstalledAppFlow
-    from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials  # type: ignore
+    from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
+    from google.auth.transport.requests import Request  # type: ignore
     
     # Configurar logging
     logging.basicConfig(level=logging.INFO)
@@ -702,27 +702,28 @@ def get_calendar_events(dates: List[str]) -> str:
                 
             # Process events
             busy_slots = []
+            has_all_day_event = False
             for event in events:
                 start = event["start"].get("dateTime", event["start"].get("date"))
                 end = event["end"].get("dateTime", event["end"].get("date"))
-                
+
                 # Convert to datetime objects
                 if "T" in start:  # dateTime format
                     start_dt = datetime.fromisoformat(start.replace("Z", "+00:00"))
                     end_dt = datetime.fromisoformat(end.replace("Z", "+00:00"))
-                    
+
                     # Format for display
                     start_display = start_dt.strftime("%I:%M %p")
                     end_display = end_dt.strftime("%I:%M %p")
-                    
+
                     result += f"  - {start_display} - {end_display}: {event['summary']}\n"
                     busy_slots.append((start_dt, end_dt))
                 else:  # all-day event
                     result += f"  - All day: {event['summary']}\n"
-                    busy_slots.append(("all-day", "all-day"))
+                    has_all_day_event = True
             
             # Calculate available slots
-            if "all-day" in [slot[0] for slot in busy_slots]:
+            if has_all_day_event:
                 result += "  Available: No availability (all-day events)\n\n"
             else:
                 # Sort busy slots by start time

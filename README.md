@@ -1,6 +1,10 @@
 # Agentes do Zero
 
-Este repositório é um guia para construir agentes do zero. Evolui até um agente ["ambiente"](https://blog.langchain.dev/introducing-ambient-agents/) que pode gerenciar seus emails com conexão à API do Gmail. Está organizado em 4 seções, cada uma com um notebook e código correspondente no diretório `src/email_assistant`. Essas seções constroem desde os conceitos básicos de agentes, até avaliação de agentes, human-in-the-loop, e finalmente memória. Tudo isso se combina em um agente que você pode implantar, e os princípios podem ser aplicados a outros agentes em uma ampla gama de tarefas.
+Este repositório é um guia para construir agentes do zero.
+Evolui até um agente ["ambiente"](https://blog.langchain.dev/introducing-ambient-agents/) que pode gerenciar seus emails com conexão à API do Gmail.
+Está organizado em 4 seções, cada uma com um notebook e código correspondente no diretório `src/email_assistant`.
+Essas seções constroem desde os conceitos básicos de agentes, até avaliação de agentes, human-in-the-loop, e finalmente memória.
+Tudo isso se combina em um agente que você pode implantar, e os princípios podem ser aplicados a outros agentes em uma ampla gama de tarefas.
 
 ![overview](notebooks/img/overview.png)
 
@@ -73,7 +77,9 @@ $ python3 -m pip install --upgrade pip
 $ pip install -e .
 ```
 
-> **⚠️ IMPORTANTE**: Não pule a etapa de instalação do pacote! Esta instalação editável é **obrigatória** para os notebooks funcionarem corretamente. O pacote é instalado como `interrupt_workshop` com nome de import `email_assistant`, permitindo que você importe de qualquer lugar com `from email_assistant import ...`
+> **⚠️ IMPORTANTE**: Não pule a etapa de instalação do pacote!
+Esta instalação editável é **obrigatória** para os notebooks funcionarem corretamente.
+O pacote é instalado como `interrupt_workshop` com nome de import `email_assistant`, permitindo que você importe de qualquer lugar com `from email_assistant import ...`
 
 ## Estrutura
 
@@ -81,7 +87,8 @@ O repositório está organizado em 4 seções, com um notebook para cada uma e c
 
 ### Prefácio: LangGraph 101
 
-Para uma breve introdução ao LangGraph e alguns dos conceitos usados neste repositório, veja o [notebook LangGraph 101](notebooks/langgraph_101.ipynb). Este notebook explica o básico de modelos de chat, chamada de ferramentas, agentes vs fluxos de trabalho, nós / arestas / memória do LangGraph, e LangGraph Studio.
+Para uma breve introdução ao LangGraph e alguns dos conceitos usados neste repositório, veja o [notebook LangGraph 101](notebooks/langgraph_101.ipynb).
+Este notebook explica o básico de modelos de chat, chamada de ferramentas, agentes vs fluxos de trabalho, nós / arestas / memória do LangGraph, e LangGraph Studio.
 
 ### Construindo um agente
 
@@ -90,7 +97,9 @@ Para uma breve introdução ao LangGraph e alguns dos conceitos usados neste rep
 
 ![overview-agent](notebooks/img/overview_agent.png)
 
-Este notebook mostra como construir o assistente de email, combinando uma [etapa de triagem de email](https://langchain-ai.github.io/langgraph/tutorials/workflows/) com um agente que gerencia a resposta do email. Você pode ver o código vinculado para a implementação completa em `src/email_assistant/email_assistant.py`.
+Este notebook mostra como construir o assistente de email, combinando uma [etapa de triagem de email](https://langchain-ai.github.io/langgraph/tutorials/workflows/) com um agente que gerencia a
+resposta do email.
+Você pode ver o código vinculado para a implementação completa em `src/email_assistant/email_assistant.py`.
 
 ![Screenshot 2025-04-04 at 4 06 18 PM](notebooks/img/studio.png)
 
@@ -100,7 +109,8 @@ Este notebook mostra como construir o assistente de email, combinando uma [etapa
 
 ![overview-eval](notebooks/img/overview_eval.png)
 
-Este notebook introduz a avaliação com um conjunto de dados de email em [eval/email_dataset.py](/eval/email_dataset.py). Mostra como executar avaliações usando Pytest e a API `evaluate` do LangSmith. Executa avaliação para respostas de email usando LLM-como-juiz, bem como avaliações para chamadas de ferramentas e decisões de triagem.
+Este notebook introduz a avaliação com um conjunto de dados de email em [eval/email_dataset.py](/eval/email_dataset.py). Mostra como executar avaliações usando Pytest e a API `evaluate` do LangSmith.
+Executa avaliação para respostas de email usando LLM-como-juiz, bem como avaliações para chamadas de ferramentas e decisões de triagem.
 
 ![Screenshot 2025-04-08 at 8 07 48 PM](notebooks/img/eval.png)
 
@@ -111,7 +121,8 @@ Este notebook introduz a avaliação com um conjunto de dados de email em [eval/
 
 ![overview-hitl](notebooks/img/overview_hitl.png)
 
-Este notebook mostra como adicionar human-in-the-loop (HITL), permitindo ao usuário revisar chamadas específicas de ferramentas (por exemplo, enviar email, agendar reunião). Para isso, usamos o [Agent Inbox](https://github.com/langchain-ai/agent-inbox) como interface para human in the loop. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl.py](/src/email_assistant/email_assistant_hitl.py).
+Este notebook mostra como adicionar human-in-the-loop (HITL), permitindo ao usuário revisar chamadas específicas de ferramentas (por exemplo, enviar email, agendar reunião).
+Para isso, usamos o [Agent Inbox](https://github.com/langchain-ai/agent-inbox) como interface para human in the loop. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl.py](/src/email_assistant/email_assistant_hitl.py).
 
 ![Agent Inbox showing email threads](notebooks/img/agent-inbox.png)
 
@@ -122,19 +133,73 @@ Este notebook mostra como adicionar human-in-the-loop (HITL), permitindo ao usu�
 
 ![overview-memory](notebooks/img/overview_memory.png)
 
-Este notebook mostra como adicionar memória ao assistente de email, permitindo que aprenda com feedback do usuário e adapte-se às preferências ao longo do tempo. O assistente com memória habilitada ([email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py)) usa o [LangGraph Store](https://langchain-ai.github.io/langgraph/concepts/memory/#long-term-memory) para persistir memórias. Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py).
+Este notebook mostra como adicionar memória ao assistente de email, permitindo que aprenda com feedback do usuário e adapte-se às preferências ao longo do tempo.
+O assistente com memória habilitada ([email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py))
+usa o [LangGraph Store](https://langchain-ai.github.io/langgraph/concepts/memory/#long-term-memory) para persistir memórias.
+Você pode ver o código vinculado para a implementação completa em [src/email_assistant/email_assistant_hitl_memory.py](/src/email_assistant/email_assistant_hitl_memory.py).
+
+## Executando como Scripts Python
+
+Além dos notebooks educacionais, você pode executar os agentes diretamente como scripts Python:
+
+### Scripts Disponíveis
+
+```shell
+# 1. LangGraph 101 - Conceitos básicos
+python src/email_assistant/langgraph_101.py
+
+# 2. Assistente de Email básico
+python src/email_assistant/email_assistant.py
+
+# 3. Assistente com Human-in-the-Loop
+python src/email_assistant/email_assistant_hitl.py
+
+# 4. Assistente com Human-in-the-Loop e Memória
+python src/email_assistant/email_assistant_hitl_memory.py
+
+# 5. Assistente com integração Gmail (requer configuração adicional)
+python src/email_assistant/email_assistant_hitl_memory_gmail.py
+```
+
+### Exemplo de Uso
+
+Para testar um script específico, você pode executar:
+
+```python
+# Exemplo: executar o assistente básico
+from email_assistant.email_assistant import email_assistant
+from email_assistant.schemas import StateInput
+
+# Email de exemplo
+email_input = """
+De: cliente@exemplo.com
+Para: suporte@empresa.com
+Assunto: Dúvida sobre produto
+
+Olá,
+
+Gostaria de saber mais informações sobre o produto X.
+Podem me ajudar?
+
+Obrigado!
+"""
+
+# Executar o assistente
+result = email_assistant.invoke(StateInput(email_input=email_input))
+print(result)
+```
 
 ## Conectando a APIs
 
 Os notebooks acima usam ferramentas mock de email e calendário.
 
-### Gmail Integration and Deployment
+### Integração Gmail e Deploy
 
-Set up Google API credentials following the instructions in [Gmail Tools README](src/email_assistant/tools/gmail/README.md).
+Configure as credenciais da API do Google seguindo as instruções em [Gmail Tools README](src/email_assistant/tools/gmail/README.md).
 
-The README also explains how to deploy the graph to LangGraph Platform.
+O README também explica como fazer deploy do grafo na LangGraph Platform.
 
-The full implementation of the Gmail integration is in [src/email_assistant/email_assistant_hitl_memory_gmail.py](/src/email_assistant/email_assistant_hitl_memory_gmail.py).
+A implementação completa da integração Gmail está em [src/email_assistant/email_assistant_hitl_memory_gmail.py](/src/email_assistant/email_assistant_hitl_memory_gmail.py).
 
 ## Running Tests
 

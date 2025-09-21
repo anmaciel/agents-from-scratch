@@ -254,3 +254,54 @@ EXPECTED_CLASSIFICATIONS = {
     "email_input_9": "respond",  # Lembrete pessoal da família
     "email_input_10": "ignore", # Email promocional/marketing
 }
+
+# Aliases para compatibilidade com testes
+email_inputs = EMAIL_DATASET
+expected_tool_calls = [
+    ["write_email"],  # email_input_1 - resposta direta
+    ["schedule_meeting"],  # email_input_2 - agendar reunião
+    ["write_email"],  # email_input_3 - resposta de status
+    [],  # email_input_4 - apenas notificar
+    [],  # email_input_5 - apenas notificar
+    ["write_email"],  # email_input_6 - resposta urgente
+    [],  # email_input_7 - ignorar
+    [],  # email_input_8 - apenas notificar
+    ["write_email"],  # email_input_9 - resposta pessoal
+    [],  # email_input_10 - ignorar
+]
+
+# Lista de classificações de triagem esperadas (compatibilidade com evaluation.ipynb)
+triage_outputs_list = [
+    "respond",  # email_input_1 - resposta direta
+    "respond",  # email_input_2 - agendar reunião
+    "respond",  # email_input_3 - resposta de status
+    "notify",   # email_input_4 - apenas notificar
+    "notify",   # email_input_5 - apenas notificar
+    "respond",  # email_input_6 - resposta urgente
+    "ignore",   # email_input_7 - ignorar
+    "notify",   # email_input_8 - apenas notificar
+    "respond",  # email_input_9 - resposta pessoal
+    "ignore",   # email_input_10 - ignorar
+]
+
+# Critérios de resposta para emails que requerem resposta
+response_criteria_list = [
+    "A resposta deve ser educada, profissional e endereçar especificamente as perguntas sobre os endpoints da API /auth/refresh e /auth/validate.",  # email_input_1
+    "A resposta deve confirmar disponibilidade, sugerir horários específicos e ser amigável para networking profissional.",  # email_input_2
+    "A resposta deve fornecer uma atualização clara sobre o status do projeto, endereçar os pontos específicos mencionados e incluir próximos passos.",  # email_input_3
+    "",  # email_input_4 - apenas notificar, sem critério de resposta
+    "",  # email_input_5 - apenas notificar, sem critério de resposta
+    "A resposta deve demonstrar urgência, reconhecer a criticidade do problema e fornecer uma linha temporal clara para resolução.",  # email_input_6
+    "",  # email_input_7 - ignorar, sem critério de resposta
+    "",  # email_input_8 - apenas notificar, sem critério de resposta
+    "A resposta deve ser carinhosa mas eficiente, confirmando o compromisso e agradecendo pelo lembrete.",  # email_input_9
+    "",  # email_input_10 - ignorar, sem critério de resposta
+]
+
+# Exemplos para dataset do LangSmith (evaluation.ipynb)
+examples_triage = []
+for i, email in enumerate(EMAIL_DATASET):
+    examples_triage.append({
+        "inputs": {"email_input": email},
+        "outputs": {"classification": triage_outputs_list[i]}
+    })
