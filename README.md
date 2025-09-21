@@ -189,6 +189,79 @@ result = email_assistant.invoke(StateInput(email_input=email_input))
 print(result)
 ```
 
+## Automação com Jobs Cron
+
+Para automação completa, o projeto inclui um job cron que busca e processa emails automaticamente:
+
+### Job Automatizado (cron.py)
+
+O `src/email_assistant/cron.py` implementa um workflow LangGraph que:
+
+1. 🔍 **Busca emails** recentes do Gmail
+2. 🤖 **Processa automaticamente** cada email usando o assistente de IA
+3. ⚡ **Executa ações** (responder, agendar reuniões, etc.)
+4. 🌐 **Integra** com LangGraph Platform para execução distribuída
+
+### Como usar o Job Cron
+
+**1. Execução programática:**
+
+```python
+from email_assistant.cron import graph, JobKickoff
+
+# Configurar job para buscar emails dos últimos 30 minutos
+config = JobKickoff(
+    email="seu@gmail.com",
+    minutes_since=30,
+    graph_name="email_assistant_hitl_memory_gmail",
+    url="http://127.0.0.1:2024"  # LangGraph Platform
+)
+
+# Executar job
+result = await graph.ainvoke(config)
+print(f"Status: {result['status']}")
+```
+
+**2. Cron real (Linux/macOS):**
+
+```bash
+# Executar a cada hora
+0 * * * * cd /path/to/project && python -c "
+import asyncio
+from email_assistant.cron import graph, JobKickoff
+
+config = JobKickoff(email='seu@gmail.com')
+result = asyncio.run(graph.ainvoke(config))
+print(f'Cron job completed: {result}')
+"
+
+# Executar a cada 15 minutos
+*/15 * * * * cd /path/to/project && python -c "..."
+```
+
+**3. Teste/desenvolvimento:**
+
+```bash
+# Executar uma vez para teste
+python -c "
+import asyncio
+from email_assistant.cron import graph, JobKickoff
+result = asyncio.run(graph.ainvoke(JobKickoff(email='test@gmail.com')))
+print(result)
+"
+```
+
+### Configurações do JobKickoff
+
+| Parâmetro | Tipo | Padrão | Descrição |
+|-----------|------|--------|-----------|
+| `email` | str | **obrigatório** | Seu endereço Gmail |
+| `minutes_since` | int | 60 | Buscar emails dos últimos X minutos |
+| `graph_name` | str | "email_assistant_hitl_memory_gmail" | Nome do grafo LangGraph |
+| `url` | str | "http://127.0.0.1:2024" | URL do LangGraph Platform |
+| `include_read` | bool | False | Incluir emails já lidos |
+| `skip_filters` | bool | False | Pular filtros de thread |
+
 ## Conectando a APIs
 
 Os notebooks acima usam ferramentas mock de email e calendário.
