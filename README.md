@@ -258,7 +258,7 @@ print(result)
 | `email` | str | **obrigatório** | Seu endereço Gmail |
 | `minutes_since` | int | 60 | Buscar emails dos últimos X minutos |
 | `graph_name` | str | "email_assistant_hitl_memory_gmail" | Nome do grafo LangGraph |
-| `url` | str | "http://127.0.0.1:2024" | URL do LangGraph Platform |
+| `url` | str | "<http://127.0.0.1:2024>" | URL do LangGraph Platform |
 | `include_read` | bool | False | Incluir emails já lidos |
 | `skip_filters` | bool | False | Pular filtros de thread |
 
